@@ -18,6 +18,13 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
+        // Chamado pelo desinstalador: só desfaz as teclas neutralizadas e sai, sem janela nem bandeja.
+        if (e.Args.Contains(Engine.NeutralCleanup.Argument, StringComparer.OrdinalIgnoreCase))
+        {
+            Shutdown(Engine.NeutralCleanup.Run());
+            return;
+        }
+
         // Uma instância só: a segunda pede para a primeira mostrar a janela e sai.
         _singleInstance = new Mutex(true, @"Local\RemapUSB.SingleInstance", out var first);
         _showSignal = new EventWaitHandle(false, EventResetMode.AutoReset, @"Local\RemapUSB.Show");

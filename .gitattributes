@@ -1,1 +1,2 @@
 *.reg text eol=crlf
+*.iss text eol=crlf

@@ -16,6 +16,9 @@ internal static class BuildInfo
 
     public static string Time => Metadata.GetValueOrDefault("BuildTime") ?? "?";
 
-    /// <summary>Ex.: "26d554b (com alterações não commitadas), compilado em 2026-10-01 18:40:12".</summary>
-    public static string Describe() => $"{Commit}{(Dirty ? " (com alterações não commitadas)" : "")}, compilado em {Time}";
+    public static string Version => typeof(BuildInfo).Assembly.GetName().Version?.ToString(3) ?? "?";
+
+    /// <summary>Ex.: "versão 1.0.0, build 26d554b (com alterações não commitadas), compilado em 2026-10-01 18:40:12".</summary>
+    public static string Describe() =>
+        $"versão {Version}, build {Commit}{(Dirty ? " (com alterações não commitadas)" : "")}, compilado em {Time}";
 }

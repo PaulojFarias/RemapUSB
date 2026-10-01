@@ -1,3 +1,5 @@
+installer/publish/
+installer/Output/
 bin/
 obj/
 .vs/

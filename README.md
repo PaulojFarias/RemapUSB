@@ -43,6 +43,28 @@ dotnet run --project src/RemapUSB.App
 - A configuração fica em `%AppData%\RemapUSB\config.json`. Rodando de dentro do repositório, o log vai para `app-<máquina>-<data-hora>.txt` na raiz; instalado, para `%LocalAppData%\RemapUSB\logs`.
 - **Não rode o Proto2a junto com o app**: os dois remapeiam os mesmos botões.
 
+## Gerar o instalador
+
+1. **Publicar** (Visual Studio): botão direito em `RemapUSB.App` → Publicar → perfil **win-x64** → Publicar.
+   Ou na linha de comando: `dotnet publish src/RemapUSB.App -p:PublishProfile=win-x64`.
+   Sai um `RemapUSB.exe` único em `installer\publish`, que roda sem o .NET instalado.
+2. **Compilar o instalador**: instale o [Inno Setup 6](https://jrsoftware.org/isinfo.php), abra `installer\RemapUSB.iss` → Build → Compile.
+   Sai `installer\Output\RemapUSB-Setup-<versão>.exe`.
+
+A versão vem do `<Version>` do `RemapUSB.App.csproj`: aumente antes de gerar uma versão nova. Instalar a versão nova por cima atualiza; a configuração de cada pessoa fica no `%AppData%`.
+
+**O instalador** instala só para o usuário (sem administrador), cria o atalho no menu Iniciar e oferece iniciar com o Windows.
+
+**O desinstalador** fecha o app, tira o "iniciar com o Windows" e roda `RemapUSB.exe --desfazer-teclas`, que remove do Scancode Map só as teclas que o app neutralizou:
+
+| Código de saída | O desinstalador |
+|---|---|
+| 0, nada a desfazer | desinstala sem pedir administrador |
+| 10, desfeito | oferece reiniciar no final (a tecla só volta ao normal depois do reinício) |
+| 1, administrador recusado ou erro | avisa que as teclas continuam trocadas e como desfazer |
+
+O `.exe` não é assinado: na primeira vez o Windows mostra "O Windows protegeu o computador" (Mais informações → Executar assim mesmo).
+
 ### Linhas `[HOOK]` no log
 
 O hook de teclado e o Raw Input rodam numa thread própria, de prioridade alta, separada da interface. Se mesmo assim o Windows atrasar o hook, o log mostra:

@@ -50,7 +50,7 @@ public partial class MainWindow : Window
         SourceInitialized += (_, _) =>
             System.Windows.Interop.HwndSource.FromHwnd(new System.Windows.Interop.WindowInteropHelper(this).Handle)?.AddHook(OnWindowMessage);
 
-        AboutText.Text =$"Build: {Infrastructure.BuildInfo.Describe()}\nConfiguração: {ConfigStore.FilePath}\nLog: {Infrastructure.Log.Folder}";
+        AboutText.Text =$"{Infrastructure.BuildInfo.Describe()}\nConfiguração: {ConfigStore.FilePath}\nLog: {Infrastructure.Log.Folder}";
         Show(View.Devices);
     }
 

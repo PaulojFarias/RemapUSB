@@ -10,6 +10,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>RemapUSB</RootNamespace>
     <AssemblyName>RemapUSB</AssemblyName>
+    <!-- Versão do app: o instalador lê daqui (do RemapUSB.exe publicado). -->
+    <Version>1.0.0</Version>
+    <Product>RemapUSB</Product>
+    <Description>Remapeia botões de controles USB</Description>
     <!-- WPF0001: o tema Fluent (ThemeMode) ainda é marcado como experimental. -->
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
   </PropertyGroup>

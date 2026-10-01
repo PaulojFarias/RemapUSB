@@ -29,7 +29,7 @@ internal sealed class Services : IDisposable
     {
         Config = ConfigStore.Load();
         Log.SetEnabled(Config.LogToFile);
-        Log.Write("INÍCIO", $"RemapUSB | build {BuildInfo.Describe()} | máquina {Environment.MachineName} | config {ConfigStore.FilePath}");
+        Log.Write("INÍCIO", $"RemapUSB | {BuildInfo.Describe()} | máquina {Environment.MachineName} | config {ConfigStore.FilePath}");
         if (!Native.DisablePowerThrottling())
             Log.Write("ERRO", "não deu para desligar o modo de economia do Windows para o app");
 
