@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RemapUSB.Probe/RemapUSB.Probe.csproj" />
+  </Folder>
+</Solution>
