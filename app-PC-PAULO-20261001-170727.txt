@@ -1,0 +1,20 @@
+17:07:27.478 [INÍCIO]     RemapUSB | máquina PC-PAULO | config C:\Users\PC-Paulo\AppData\Roaming\RemapUSB\config.json
+17:07:27.593 [CONFIG]     0 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:08:10.665 [CONFIG]     1 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:08:10.668 [DONGLE]     ControleTV salvo (0627:697D)
+17:08:19.071 [GRAVAÇÃO]   iniciada para 0627:697D
+17:08:21.342 [GRAVAÇÃO]   mídia 0x0223, VK no hook 0xAC (tabela)
+17:08:32.788 [GRAVAÇÃO]   mídia 0x0224, VK no hook 0xA6 (tabela)
+17:08:52.852 [GRAVAÇÃO]   mídia 0x00E2, VK no hook 0xAD (tabela)
+17:09:08.392 [GRAVAÇÃO]   concluída para 0627:697D
+17:09:08.402 [CONFIG]     1 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:09:28.799 [CONFIG]     1 dispositivo(s) ativo(s), 1 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:09:32.036 [RAW]        ControleTV: aperta Início (navegador) (uso 0x0223)
+17:09:32.132 [RAW]        ControleTV: solta Início (navegador) (uso 0x0223)
+17:09:52.168 [CONFIG]     1 dispositivo(s) ativo(s), 2 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:10:44.524 [CONFIG]     1 dispositivo(s) ativo(s), 2 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:11:15.468 [CONFIG]     1 dispositivo(s) ativo(s), 2 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:12:11.494 [CONFIG]     0 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:12:13.305 [CONFIG]     1 dispositivo(s) ativo(s), 2 tecla(s) de mídia bloqueáveis, teclas neutralizadas: Menu → F24
+17:12:16.150 [RAW]        ControleTV: aperta Início (navegador) (uso 0x0223)
+17:12:16.254 [RAW]        ControleTV: solta Início (navegador) (uso 0x0223)
