@@ -10,18 +10,23 @@ internal static class Log
 {
     private static StreamWriter? _file;
 
-    public static string Open()
+    public static string Open(string prefix = "probe")
     {
         var root = FindRepositoryRoot() ?? Directory.GetCurrentDirectory();
-        var path = Path.Combine(root, $"probe-{Environment.MachineName}-{DateTime.Now:yyyyMMdd-HHmmss}.txt");
+        var path = Path.Combine(root, $"{prefix}-{Environment.MachineName}-{DateTime.Now:yyyyMMdd-HHmmss}.txt");
         _file = new StreamWriter(path, append: false, new UTF8Encoding(false)) { AutoFlush = true };
         return path;
     }
 
+    private static readonly Lock Gate = new();
+
     public static void Write(string line = "")
     {
-        Console.WriteLine(line);
-        _file?.WriteLine(line);
+        lock (Gate)
+        {
+            Console.WriteLine(line);
+            _file?.WriteLine(line);
+        }
     }
 
     private static string? FindRepositoryRoot()

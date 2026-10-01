@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>RemapUSB.Proto2a</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\RemapUSB.Probe\Native.cs" Link="Shared\Native.cs" />
+    <Compile Include="..\RemapUSB.Probe\Log.cs" Link="Shared\Log.cs" />
+  </ItemGroup>
+
+</Project>

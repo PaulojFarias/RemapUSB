@@ -24,7 +24,8 @@ Um controle USB se divide em partes, e cada parte segue um caminho diferente no 
 ## Estado
 
 - [x] **Protótipo 1** (`src/RemapUSB.Probe`): console que mostra cada botão e por qual parte ele chegou.
-- [ ] **Protótipo 2:** assumir a interface do Power e ler o botão sem o PC desligar.
+- [ ] **Protótipo 2a** (`src/RemapUSB.Proto2a`): bloquear botões do controle e disparar outra ação, sem trocar driver.
+- [ ] **Protótipo 2b:** assumir a interface do Power e ler o botão sem o PC desligar.
 - [ ] App de bandeja (WPF), gravação, ações e configuração em JSON.
 
 ## Rodar o Protótipo 1
@@ -44,3 +45,23 @@ Linhas `[RAW]` dizem de qual parte do dispositivo veio o evento. Linhas `[HOOK]`
 Com filtro, o hook só grava teclas que chegam até 150ms antes ou depois de um evento do dispositivo filtrado, para não registrar o que você digita em outros teclados. **Sem filtro, o hook grava todas as teclas**: não rode sem filtro enquanto digita algo sensível.
 
 > ⚠️ Não aperte o Power durante o teste: o Windows ainda trata esse botão e desliga o PC.
+
+## Rodar o Protótipo 2a
+
+Mapeamentos fixos no código (`Program.cs`), para o controle LE-7655 (VID_0627 / PID_697D):
+
+| Botão | Ação |
+|---|---|
+| Voltar | Esc |
+| Home | fecha o TubeTV (se aberto) e abre de novo |
+| Menu de contexto | Play/Pause |
+
+Os demais botões continuam normais.
+
+```bash
+dotnet run --project src/RemapUSB.Proto2a
+```
+
+O log vai para `proto2a-<máquina>-<data-hora>.txt` na raiz do repositório.
+
+**Como o bloqueio funciona:** o hook de teclado segura as teclas mapeadas e cruza com o Raw Input para saber se vieram do controle. Nos botões de mídia o Raw chega antes do hook; no Menu de contexto, depois. Se em 60ms nenhum Raw do controle aparecer, a tecla veio de outro teclado e é reenviada ao Windows.

@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/RemapUSB.Probe/RemapUSB.Probe.csproj" />
+    <Project Path="src/RemapUSB.Proto2a/RemapUSB.Proto2a.csproj" />
   </Folder>
 </Solution>
