@@ -1,49 +1,90 @@
 # RemapUSB
 
-App de bandeja para Windows que remapeia os botões de **um dispositivo USB específico** (pensado para controles de mídia) para novas ações: outra tecla, tecla de mídia, abrir/fechar app, abrir site, executar comando.
+App de bandeja para Windows que remapeia os botões de **um controle USB específico** para novas ações. Foi pensado para controles de mídia, como o controle remoto de um PC ligado na TV.
 
-O remapeamento vale só para o dispositivo salvo. O mesmo botão vindo de outro teclado continua normal.
+O remapeamento vale só para o controle salvo: o mesmo botão vindo de outro teclado continua funcionando normalmente.
 
-## Como vai funcionar
+**Exemplos:** o Home do controle abre um app em vez do navegador, o Voltar envia Esc, o Menu vira Play/Pause, outro botão fecha um app.
 
-1. **Escutar:** por 30s, o primeiro dispositivo USB conectado é salvo (VID/PID e as partes que ele expõe).
-2. **Ao iniciar:** se existe dispositivo salvo, o app fica na bandeja escutando; se não, oferece a escuta.
-3. **Gravar botões:** a lista começa vazia e cada botão apertado no dispositivo vira uma linha.
-4. **Remapear:** cada linha recebe uma ação. O padrão é "Manter original".
+## Instalar
 
-## Como o Windows vê um controle de mídia
+1. Rode o `RemapUSB-Setup-<versão>.exe` (veja [Gerar o instalador](#gerar-o-instalador)).
+2. Na primeira vez, o Windows pode mostrar "O Windows protegeu o computador", porque o instalador não é assinado. Clique em **Mais informações** e depois em **Executar assim mesmo**.
 
-Um controle USB se divide em partes, e cada parte segue um caminho diferente no Windows:
+O instalador:
+- instala só para o seu usuário, sem pedir administrador;
+- cria o atalho no menu Iniciar;
+- oferece **iniciar o RemapUSB com o Windows**.
 
-| Parte | Botões típicos | Como o app captura |
+Para atualizar, rode o instalador da versão nova por cima. A configuração continua.
+
+## Usar
+
+1. **Adicionar dispositivo:** clique em Adicionar dispositivo e conecte o controle nos 30 segundos seguintes. Se ele já estiver plugado, tire e coloque de novo. O primeiro dispositivo conectado nesse tempo é o que fica salvo.
+2. **Gravar botões:** clique em Gravar botões e aperte cada botão do controle uma vez. A lista começa vazia e cada botão novo vira uma linha. Clique em Concluir gravação.
+3. **Escolher a ação:** clique numa linha, escolha a ação e salve. O nome do botão pode ser editado direto na lista.
+
+**Fechar a janela** não fecha o app: ele continua rodando na bandeja, no ícone do controle perto do relógio. Pelo ícone dá para abrir a janela, pausar o remapeamento, ligar ou desligar o "iniciar com o Windows" e sair.
+
+Dá para salvar mais de um controle, cada um com os seus botões.
+
+### Ações disponíveis
+
+| Ação | O que faz |
+|---|---|
+| Manter original | o botão continua fazendo o que já fazia |
+| Não fazer nada | o botão fica sem função |
+| Enviar tecla ou atalho | envia a tecla ou combinação capturada (ex.: Esc, Ctrl + Shift + T) |
+| Tecla de mídia | Play/Pause, próxima, anterior, parar, volume, mudo |
+| Abrir app | abre o app, ou traz a janela para a frente se já estiver aberto |
+| Fechar app | pede para o app fechar e, se ele não fechar, encerra à força |
+| Abrir/fechar app | alterna: abre se estiver fechado, fecha se estiver aberto |
+| Reiniciar app | fecha (se estiver aberto) e abre de novo |
+| Abrir site | abre o endereço no navegador padrão |
+| Abrir arquivo ou pasta | abre com o programa padrão do Windows |
+| Executar comando | roda o comando sem abrir janela |
+
+Os apps podem ser da Store/MSIX ou `.exe` comuns. Os da Store são abertos pelo pacote, então continuam funcionando depois de atualizados.
+
+### Botões de mídia e botões de teclado
+
+Um controle USB aparece no Windows dividido em partes, e cada parte se comporta de um jeito:
+
+| Parte | Botões típicos | Tecla original |
 |---|---|---|
-| Teclado | setas, OK, voltar | Raw Input + hook de teclado |
-| Consumer control | play, volume, mute | Raw Input + hook de teclado |
-| Controlador de sistema | **Power**, Sleep | Não aparece no Raw Input; exige o app assumir a interface USB |
+| **Mídia** | Home, Voltar, volume, mudo | **bloqueada**: só a nova ação acontece |
+| **Teclado** | setas, OK, Menu, Backspace, Delete | o Windows não deixa bloquear só a tecla do controle, então você escolhe |
 
-## Estado
+Para botões de teclado, o editor oferece duas opções:
 
-- [x] **Protótipo 1** (`src/RemapUSB.Probe`): console que mostra cada botão e por qual parte ele chegou.
-- [x] **Protótipo 2a** (`src/RemapUSB.Proto2a`): remapear botões de mídia (bloqueio no hook) e de teclado (tecla neutralizada), sem trocar driver.
-- [ ] ~~Protótipo 2b: Power~~ fora do escopo por enquanto.
-- [x] **Mockup das telas** (`docs/mockup.html`): aprovado.
-- [ ] **App** (`src/RemapUSB.App`): bandeja, dispositivos, escuta de 30s, gravação, editor de ação e configurações. Em teste.
+- **Deixar passar** (padrão): a nova ação acontece e a tecla original também chega ao programa em foco.
+- **Neutralizar:** a tecla vira uma tecla sem uso (F13 a F24) em **todos os teclados**, e o app devolve a original aos outros teclados. Pede administrador e reinício, que você aplica em **Configurações → Teclas neutralizadas no Windows**. Com o RemapUSB fechado, a tecla fica sem função em todos os teclados, então só vale a pena para teclas pouco usadas, como o Menu.
 
-## Rodar o app
+O desinstalador desfaz as teclas neutralizadas e oferece reiniciar. Se o pedido de administrador for recusado, ele avisa como desfazer depois.
 
-Requer .NET 10 SDK.
+### Limitações
+
+- **Botão Power:** não é suportado. O Windows o trata antes de qualquer programa.
+- **Ponteiro de "air mouse":** é ignorado.
+- **Controles Bluetooth:** não são reconhecidos. O app identifica os dispositivos pelo VID/PID USB.
+- **Programas abertos como administrador:** o Windows não deixa um programa comum mandar teclas para eles.
+
+## Configuração e log
+
+- **Configuração:** `%AppData%\RemapUSB\config.json`.
+- **Log** (pode ser desligado em Configurações): `%LocalAppData%\RemapUSB\logs`. Rodando de dentro do repositório, vai para `app-<máquina>-<data-hora>.txt` na raiz.
+- A primeira linha do log traz a versão, o commit e a hora da compilação. A mesma informação aparece em **Configurações → Sobre**.
+- Teclas de outros teclados nunca entram no log.
+
+## Desenvolvimento
+
+Requer o .NET 10 SDK. App em WPF (tema Fluent do Windows), sem pacotes externos.
 
 ```bash
 dotnet run --project src/RemapUSB.App
 ```
 
-- **Primeiro uso:** Adicionar dispositivo, conectar o controle em 30s, Gravar botões, apertar cada botão uma vez, Concluir, clicar numa linha e escolher a ação.
-- **Fechar a janela** deixa o app na bandeja (ícone do controle perto do relógio). Para sair de vez: botão direito no ícone, Sair.
-- **Iniciar com o Windows** fica em Configurações (abre direto na bandeja, com `--tray`).
-- A configuração fica em `%AppData%\RemapUSB\config.json`. Rodando de dentro do repositório, o log vai para `app-<máquina>-<data-hora>.txt` na raiz; instalado, para `%LocalAppData%\RemapUSB\logs`.
-- **Não rode o Proto2a junto com o app**: os dois remapeiam os mesmos botões.
-
-## Gerar o instalador
+### Gerar o instalador
 
 Com o [Inno Setup 6](https://jrsoftware.org/isinfo.php) instalado, dê dois cliques em **`installer\gerar-instalador.cmd`**. Ele publica o app, compila o instalador e abre a pasta `installer\Output` com o `RemapUSB-Setup-<versão>.exe`.
 
@@ -52,11 +93,9 @@ Os dois passos que ele faz, se precisar rodar à mão:
 1. **Publicar:** `dotnet publish src/RemapUSB.App -p:PublishProfile=win-x64`. Sai um `RemapUSB.exe` único em `installer\publish`, que roda sem o .NET instalado.
 2. **Compilar:** abrir `installer\RemapUSB.iss` no Inno Setup → Build → Compile.
 
-**Versão:** `<base>.<quantidade de commits>`, por exemplo `1.0.27`. O último número sobe sozinho a cada commit. A base (`RemapUsbBaseVersion` no `RemapUSB.App.csproj`) é manual: mude para marcar uma versão maior. Instalar a versão nova por cima atualiza; a configuração de cada pessoa fica no `%AppData%`.
+**Versão:** `<base>.<quantidade de commits>`, por exemplo `1.0.27`. O último número sobe sozinho a cada commit. A base (`RemapUsbBaseVersion` no `RemapUSB.App.csproj`) é manual: mude para marcar uma versão maior.
 
-**O instalador** instala só para o usuário (sem administrador), cria o atalho no menu Iniciar e oferece iniciar com o Windows.
-
-**O desinstalador** fecha o app, tira o "iniciar com o Windows" e roda `RemapUSB.exe --desfazer-teclas`, que remove do Scancode Map só as teclas que o app neutralizou:
+**Desinstalação:** o desinstalador roda `RemapUSB.exe --desfazer-teclas`, que remove do Scancode Map só as teclas que o app neutralizou:
 
 | Código de saída | O desinstalador |
 |---|---|
@@ -64,68 +103,32 @@ Os dois passos que ele faz, se precisar rodar à mão:
 | 10, desfeito | oferece reiniciar no final (a tecla só volta ao normal depois do reinício) |
 | 1, administrador recusado ou erro | avisa que as teclas continuam trocadas e como desfazer |
 
-O `.exe` não é assinado: na primeira vez o Windows mostra "O Windows protegeu o computador" (Mais informações → Executar assim mesmo).
+### Como o motor funciona
 
-### Linhas `[HOOK]` no log
+O hook de teclado e o Raw Input rodam numa thread própria, de prioridade alta, separada da interface.
 
-O hook de teclado e o Raw Input rodam numa thread própria, de prioridade alta, separada da interface. Se mesmo assim o Windows atrasar o hook, o log mostra:
+- **Botões de mídia:** o hook segura a tecla que o Windows gera para o botão e cruza com o Raw Input, que diz de qual dispositivo ela veio. A tecla que o Windows gera para cada botão é aprendida na gravação.
+- **Botões de teclado:** bloquear no hook não funciona, porque com a tecla bloqueada o Windows nem gera o Raw Input. Por isso existem o "deixar passar" e o "neutralizar" (Scancode Map). O app preserva entradas do Scancode Map que não são dele.
+- **Janela do RemapUSB em foco:** nesse caso o Windows manda o botão de mídia como comando de app (`WM_APPCOMMAND`), em vez de passar a tecla pelo hook. A janela descarta o comando de botões remapeados e a ação dispara assim mesmo.
+
+Linhas `[HOOK]` e `[APPCOMMAND]` no log:
 
 | Linha | Significa |
 |---|---|
 | `chegou ao hook com N ms de atraso` | o Windows demorou mais de 40 ms para chamar o hook |
 | `segurada antes do Raw` | a tecla chegou ao hook antes do Raw do controle; o app espera até 60 ms |
 | `o Raw chegou, mas o hook não recebeu a tecla` | o Windows não passou a tecla pelo hook: a ação dispara assim mesmo, e a linha diz qual janela estava em foco |
-| `[APPCOMMAND] janela do RemapUSB recebeu ...` | com a janela do app em foco, o Windows mandou o botão como comando de app; se o botão está remapeado, o comando é descartado (o navegador não abre) |
+| `[APPCOMMAND] janela do RemapUSB recebeu ...` | com a janela do app em foco, o botão chegou como comando de app; se o botão está remapeado, o comando é descartado |
 
-A primeira linha do log traz o build: commit do git, se havia alterações não commitadas e a hora da compilação. A mesma informação aparece em Configurações, em Sobre.
+### Estrutura do repositório
 
-### Como o app trata cada botão
-
-| Parte | Tecla original | Como |
-|---|---|---|
-| Mídia (Home, Voltar, volume...) | bloqueada | O hook segura a tecla que o Windows gera e cruza com o Raw Input do dispositivo. O VK de cada botão é aprendido na gravação. |
-| Teclado (Menu, setas, Backspace...) | "Deixar passar" ou "Neutralizar" | Bloquear não funciona (o Windows não gera o Raw). Neutralizar troca a tecla por F13 a F24 no Scancode Map; o app devolve a original aos outros teclados. |
-
-Teclas neutralizadas são aplicadas em Configurações (pede administrador e reinício). O app preserva entradas do Scancode Map que não são dele, e reconhece o `tools/menu-para-f24.reg` do Proto2a como dele.
-
-## Rodar o Protótipo 1
-
-Requer .NET 10 SDK. Com o controle plugado:
-
-```bash
-dotnet run --project src/RemapUSB.Probe -- VID_0627
-```
-
-O argumento filtra pelo trecho do caminho do dispositivo (troque pelo VID do seu controle). Sem argumento, mostra todos.
-
-O probe escuta com **qualquer janela em foco**, então dá para apertar os botões mesmo que eles abram o navegador. Tudo é gravado também em `probe-<máquina>-<data-hora>.txt` na raiz do repositório.
-
-Linhas `[RAW]` dizem de qual parte do dispositivo veio o evento. Linhas `[HOOK]` mostram o que passou pelo fluxo de teclado do Windows (sem saber o dispositivo).
-
-Com filtro, o hook só grava teclas que chegam até 150ms antes ou depois de um evento do dispositivo filtrado, para não registrar o que você digita em outros teclados. **Sem filtro, o hook grava todas as teclas**: não rode sem filtro enquanto digita algo sensível.
-
-> ⚠️ Não aperte o Power durante o teste: o Windows ainda trata esse botão e desliga o PC.
-
-## Rodar o Protótipo 2a
-
-Mapeamentos fixos no código (`Program.cs`), para o controle LE-7655 (VID_0627 / PID_697D):
-
-| Botão | Ação |
+| Pasta | Conteúdo |
 |---|---|
-| Voltar | Esc |
-| Home | fecha o TubeTV (se aberto) e abre de novo |
-| Menu de contexto | Play/Pause |
+| `src/RemapUSB.App` | o app |
+| `installer` | script do Inno Setup e `gerar-instalador.cmd` |
+| `src/RemapUSB.Probe` | protótipo 1: console que mostra cada botão e por qual parte do controle ele chega |
+| `src/RemapUSB.Proto2a` | protótipo 2a: remapeamento com mapeamentos fixos, que provou a técnica do app |
+| `tools` | `.reg` que o protótipo 2a usava para neutralizar o Menu (o app faz isso em Configurações) |
+| `docs/mockup.html` | mockup clicável das telas, aprovado antes do app |
 
-Os demais botões continuam normais.
-
-**Antes, uma vez:** dê dois cliques em `tools/menu-para-f24.reg`, confirme e **reinicie o Windows**. Para desfazer, use `tools/desfazer-menu-para-f24.reg` e reinicie. O `.reg` substitui qualquer Scancode Map que já exista na máquina.
-
-```bash
-dotnet run --project src/RemapUSB.Proto2a
-```
-
-O log vai para `proto2a-<máquina>-<data-hora>.txt` na raiz do repositório. A primeira linha depois do TubeTV diz se o Scancode Map está configurado. Linhas `[DONGLE]` dizem se o controle estava conectado ou desconectado ao iniciar, e quando ele foi desconectado ou conectado depois.
-
-**Botões de mídia (Voltar, Home):** o hook de teclado segura a tecla e cruza com o Raw Input para saber se veio do controle. O Raw chega antes do hook, então a decisão é imediata. Se em 60ms nenhum Raw do controle aparecer, a tecla veio de outro teclado e é reenviada ao Windows.
-
-**Botões de teclado (Menu):** bloquear no hook não funciona, porque com a tecla bloqueada o Windows nem gera o Raw e não dá para saber de onde ela veio. Por isso a tecla é **neutralizada**: o Scancode Map faz o Menu de todos os teclados virar F24, que nenhum programa usa. O F24 do controle passa sem efeito e dispara a ação; o F24 de outro teclado é devolvido como Menu. Com o app fechado, a tecla Menu de qualquer teclado fica sem função.
+Os protótipos ficaram como registro de como a técnica foi validada. **Não rode o Proto2a junto com o app**, porque os dois remapeiam os mesmos botões.
