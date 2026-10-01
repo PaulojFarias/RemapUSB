@@ -24,8 +24,9 @@ Um controle USB se divide em partes, e cada parte segue um caminho diferente no 
 ## Estado
 
 - [x] **Protótipo 1** (`src/RemapUSB.Probe`): console que mostra cada botão e por qual parte ele chegou.
-- [ ] **Protótipo 2a** (`src/RemapUSB.Proto2a`): bloquear botões do controle e disparar outra ação, sem trocar driver.
-- [ ] **Protótipo 2b:** assumir a interface do Power e ler o botão sem o PC desligar.
+- [x] **Protótipo 2a** (`src/RemapUSB.Proto2a`): remapear botões de mídia (bloqueio no hook) e de teclado (tecla neutralizada), sem trocar driver.
+- [ ] ~~Protótipo 2b: Power~~ fora do escopo por enquanto.
+- [ ] **Mockup das telas** (`docs/mockup.html`): abra no navegador e clique pelas telas. Em aprovação.
 - [ ] App de bandeja (WPF), gravação, ações e configuração em JSON.
 
 ## Rodar o Protótipo 1

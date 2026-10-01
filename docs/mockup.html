@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RemapUSB Mockup</title>
+<style>
+  :root {
+    --desk: #dfe6ef;
+    --desk-2: #c9d5e4;
+    --win: #f3f3f3;
+    --nav: #ebebeb;
+    --card: #ffffff;
+    --card-2: #f9f9f9;
+    --stroke: #e0e0e0;
+    --stroke-2: #d1d1d1;
+    --text: #1b1b1b;
+    --text-2: #5f5f5f;
+    --text-3: #8a8a8a;
+    --accent: #005fb8;
+    --accent-hover: #0a6cc6;
+    --accent-text: #ffffff;
+    --accent-soft: #e5f0fb;
+    --ok: #0f7b0f;
+    --ok-soft: #dff6dd;
+    --warn: #8a5300;
+    --warn-soft: #fff4ce;
+    --danger: #c42b1c;
+    --danger-soft: #fde7e9;
+    --rec: #d13438;
+    --hover: rgba(0, 0, 0, .045);
+    --shadow: 0 8px 32px rgba(0, 0, 0, .14), 0 2px 6px rgba(0, 0, 0, .08);
+    --taskbar: rgba(243, 243, 243, .92);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --desk: #1a2230; --desk-2: #10151e;
+      --win: #202020; --nav: #1c1c1c; --card: #2b2b2b; --card-2: #272727;
+      --stroke: #3a3a3a; --stroke-2: #474747;
+      --text: #ffffff; --text-2: #c8c8c8; --text-3: #8f8f8f;
+      --accent: #60cdff; --accent-hover: #74d4ff; --accent-text: #000000; --accent-soft: #1f3a4a;
+      --ok: #6ccb5f; --ok-soft: #1e3a1c; --warn: #fce100; --warn-soft: #3d3514;
+      --danger: #ff99a4; --danger-soft: #442726; --rec: #ff6b6f;
+      --hover: rgba(255, 255, 255, .06);
+      --shadow: 0 8px 32px rgba(0, 0, 0, .5), 0 2px 6px rgba(0, 0, 0, .35);
+      --taskbar: rgba(32, 32, 32, .92);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --desk: #1a2230; --desk-2: #10151e;
+    --win: #202020; --nav: #1c1c1c; --card: #2b2b2b; --card-2: #272727;
+    --stroke: #3a3a3a; --stroke-2: #474747;
+    --text: #ffffff; --text-2: #c8c8c8; --text-3: #8f8f8f;
+    --accent: #60cdff; --accent-hover: #74d4ff; --accent-text: #000000; --accent-soft: #1f3a4a;
+    --ok: #6ccb5f; --ok-soft: #1e3a1c; --warn: #fce100; --warn-soft: #3d3514;
+    --danger: #ff99a4; --danger-soft: #442726; --rec: #ff6b6f;
+    --hover: rgba(255, 255, 255, .06);
+    --shadow: 0 8px 32px rgba(0, 0, 0, .5), 0 2px 6px rgba(0, 0, 0, .35);
+    --taskbar: rgba(32, 32, 32, .92);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--desk);
+    color: var(--text);
+    font: 14px/1.45 "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  svg { display: block; }
+
+  /* ---------- Faixa do mockup ---------- */
+  .demo {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+    padding: 12px 20px; background: var(--card); border-bottom: 1px solid var(--stroke);
+  }
+  .demo h1 { margin: 0; font-size: 15px; font-weight: 600; }
+  .demo p { margin: 0; color: var(--text-2); font-size: 13px; flex: 1 1 320px; }
+  .demo .group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .demo .label { color: var(--text-3); font-size: 12px; margin-right: 2px; }
+  .chip {
+    border: 1px solid var(--stroke-2); background: var(--card-2); border-radius: 999px;
+    padding: 3px 12px; font-size: 13px; cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+
+  /* ---------- Área de trabalho ---------- */
+  .desktop {
+    position: relative; min-height: calc(100vh - 58px);
+    background: radial-gradient(1200px 600px at 20% 0%, var(--desk), var(--desk-2));
+    padding: 28px 16px 72px; overflow: hidden;
+  }
+  .window {
+    position: relative; max-width: 980px; height: 640px; margin: 0 auto;
+    background: var(--win); border: 1px solid var(--stroke-2); border-radius: 8px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; overflow: clip;
+  }
+  .window[hidden] { display: none; }
+  .titlebar {
+    height: 40px; display: flex; align-items: center; gap: 10px; padding-left: 14px;
+    font-size: 12px; flex: none; user-select: none;
+  }
+  .titlebar .controls { margin-left: auto; display: flex; height: 100%; }
+  .titlebar .controls button {
+    width: 46px; border: 0; background: none; cursor: pointer; color: var(--text-2);
+  }
+  .titlebar .controls button:hover { background: var(--hover); }
+  .titlebar .controls button.close:hover { background: #c42b1c; color: #fff; }
+  .appbody { flex: 1; display: flex; min-height: 0; }
+
+  nav.side { width: 210px; flex: none; padding: 4px 6px; display: flex; flex-direction: column; gap: 2px; }
+  nav.side button {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    border: 0; background: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; position: relative;
+  }
+  nav.side button:hover { background: var(--hover); }
+  nav.side button[aria-current="page"] { background: var(--hover); font-weight: 600; }
+  nav.side button[aria-current="page"]::before {
+    content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px;
+    border-radius: 2px; background: var(--accent);
+  }
+  nav.side .spacer { flex: 1; }
+
+  .content {
+    flex: 1; min-width: 0; overflow: auto; background: var(--card-2);
+    border-top-left-radius: 8px; border-left: 1px solid var(--stroke); border-top: 1px solid var(--stroke);
+    padding: 24px 32px 32px;
+  }
+  .crumbs { display: flex; align-items: center; gap: 8px; font-size: 28px; font-weight: 600; margin: 0 0 20px; line-height: 1.2; }
+  .crumbs .link { color: var(--text-2); cursor: pointer; background: none; border: 0; padding: 0; font: inherit; }
+  .crumbs .link:hover { color: var(--text); }
+  .crumbs .sep { color: var(--text-3); font-weight: 400; }
+  h3 { font-size: 14px; font-weight: 600; margin: 22px 0 8px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--stroke); border-radius: 6px;
+    padding: 14px 16px; display: flex; align-items: center; gap: 16px;
+  }
+  .card + .card { margin-top: 4px; }
+  .card.click { cursor: pointer; }
+  .card.click:hover { background: color-mix(in srgb, var(--card) 92%, var(--text) 8%); }
+  .card .grow { flex: 1; min-width: 0; }
+  .card .title { font-weight: 600; }
+  .card .sub { color: var(--text-2); font-size: 12px; }
+  .icon-tile {
+    width: 40px; height: 40px; border-radius: 6px; display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent); flex: none;
+  }
+
+  .status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-3); }
+  .dot.ok { background: var(--ok); }
+  .dot.off { background: var(--danger); }
+
+  .btn {
+    border: 1px solid var(--stroke-2); background: var(--card); border-radius: 4px;
+    padding: 5px 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+  }
+  .btn:hover { background: color-mix(in srgb, var(--card) 94%, var(--text) 6%); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+  .btn.primary:hover { background: var(--accent-hover); }
+  .btn.rec { color: var(--rec); }
+  .btn.subtle { border-color: transparent; background: none; }
+  .btn.subtle:hover { background: var(--hover); }
+  .btn:disabled { opacity: .45; cursor: default; }
+
+  .toggle { position: relative; width: 40px; height: 20px; flex: none; }
+  .toggle input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .toggle span {
+    position: absolute; inset: 0; border-radius: 10px; border: 1px solid var(--text-2);
+    transition: background .15s; pointer-events: none;
+  }
+  .toggle span::after {
+    content: ""; position: absolute; top: 3px; left: 4px; width: 12px; height: 12px; border-radius: 50%;
+    background: var(--text-2); transition: transform .15s;
+  }
+  .toggle input:checked + span { background: var(--accent); border-color: var(--accent); }
+  .toggle input:checked + span::after { transform: translateX(19px); background: var(--accent-text); }
+
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 8px; border-radius: 999px;
+    border: 1px solid transparent;
+  }
+  .badge.midia { background: var(--accent-soft); color: var(--accent); }
+  .badge.teclado { background: var(--warn-soft); color: var(--warn); }
+
+  .empty {
+    text-align: center; padding: 48px 24px; background: var(--card); border: 1px dashed var(--stroke-2);
+    border-radius: 8px; color: var(--text-2);
+  }
+  .empty .big { font-size: 20px; font-weight: 600; color: var(--text); margin: 14px 0 6px; }
+  .empty .icon-tile { margin: 0 auto; width: 56px; height: 56px; border-radius: 12px; }
+
+  .note {
+    display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; border-radius: 6px;
+    font-size: 13px; border: 1px solid var(--stroke);
+  }
+  .note.info { background: var(--accent-soft); }
+  .note.warn { background: var(--warn-soft); }
+  .note.danger { background: var(--danger-soft); }
+  .note.ok { background: var(--ok-soft); }
+  .note b { font-weight: 600; }
+
+  /* ---------- Tabela de botões ---------- */
+  .table { background: var(--card); border: 1px solid var(--stroke); border-radius: 6px; overflow: hidden; }
+  .row {
+    display: grid; grid-template-columns: minmax(150px, 1.3fr) 90px minmax(170px, 1.6fr) 32px;
+    gap: 12px; align-items: center; padding: 8px 14px; border-top: 1px solid var(--stroke);
+  }
+  .row:first-child { border-top: 0; }
+  .row.head { font-size: 12px; color: var(--text-3); padding-top: 8px; padding-bottom: 8px; background: var(--card-2); }
+  .row.body { cursor: pointer; }
+  .row.body:hover { background: var(--hover); }
+  .row .name input {
+    width: 100%; border: 1px solid transparent; background: none; border-radius: 4px; padding: 3px 6px; margin-left: -7px;
+    font-weight: 600;
+  }
+  .row .name input:hover { border-color: var(--stroke-2); }
+  .row .name input:focus { outline: none; border-color: var(--accent); border-bottom-width: 2px; background: var(--card); }
+  .row .code { color: var(--text-3); font-size: 11px; font-family: Consolas, ui-monospace, monospace; }
+  .row .action { color: var(--text-2); font-size: 13px; min-width: 0; }
+  .row .action .main { color: var(--text); }
+  .row .action.keep .main { color: var(--text-3); }
+  .row.flash { animation: flash 1.1s ease-out; }
+  .row.new { animation: slidein .35s ease-out; }
+  @keyframes flash { 0% { background: var(--accent-soft); } 100% { background: transparent; } }
+  @keyframes slidein { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+  .chev { color: var(--text-3); }
+
+  .recbar {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 12px;
+    border-radius: 6px; background: var(--card); border: 1px solid var(--rec);
+  }
+  .recbar .pulse { width: 12px; height: 12px; border-radius: 50%; background: var(--rec); animation: pulse 1.2s infinite; flex: none; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+  .recbar .grow { flex: 1; }
+  .recbar .sub { color: var(--text-2); font-size: 12px; }
+
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .toolbar .grow { flex: 1; }
+
+  /* ---------- Painel lateral (editor de ação) ---------- */
+  .scrim { position: absolute; inset: 40px 0 0; background: rgba(0, 0, 0, .25); opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .scrim.open { opacity: 1; pointer-events: auto; }
+  .drawer {
+    position: absolute; top: 40px; right: 0; bottom: 0; width: min(420px, 100%);
+    background: var(--win); border-left: 1px solid var(--stroke-2); box-shadow: var(--shadow);
+    transform: translateX(105%); transition: transform .22s ease, visibility .22s; display: flex; flex-direction: column;
+    visibility: hidden;
+  }
+  .drawer.open { transform: none; visibility: visible; }
+  .drawer header { padding: 18px 22px 8px; }
+  .drawer header .t { font-size: 20px; font-weight: 600; }
+  .drawer .scroll { flex: 1; overflow: auto; padding: 4px 22px 16px; }
+  .drawer footer { padding: 14px 22px; border-top: 1px solid var(--stroke); display: flex; gap: 8px; justify-content: flex-end; background: var(--card-2); }
+  .field { margin-top: 16px; }
+  .field > label, .field > .lbl { display: block; font-size: 13px; margin-bottom: 6px; }
+  .input, select.input {
+    width: 100%; border: 1px solid var(--stroke-2); border-bottom-color: var(--text-3); background: var(--card);
+    border-radius: 4px; padding: 6px 10px;
+  }
+  .input:focus { outline: none; border-bottom: 2px solid var(--accent); }
+  .hint { font-size: 12px; color: var(--text-2); margin-top: 6px; }
+  .applist { border: 1px solid var(--stroke); border-radius: 4px; background: var(--card); max-height: 200px; overflow: auto; margin-top: 6px; }
+  .appitem { display: flex; align-items: center; gap: 10px; padding: 7px 10px; cursor: pointer; border-top: 1px solid var(--stroke); }
+  .appitem:first-child { border-top: 0; }
+  .appitem:hover { background: var(--hover); }
+  .appitem[aria-selected="true"] { background: var(--accent-soft); }
+  .appitem .kind { margin-left: auto; font-size: 11px; color: var(--text-3); }
+  .appicon { width: 24px; height: 24px; border-radius: 5px; display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff; flex: none; }
+  .radio { display: flex; gap: 10px; padding: 10px 12px; border: 1px solid var(--stroke); border-radius: 6px; background: var(--card); cursor: pointer; }
+  .radio + .radio { margin-top: 6px; }
+  .radio input { margin-top: 3px; accent-color: var(--accent); }
+  .radio .t { font-weight: 600; }
+  .radio .d { font-size: 12px; color: var(--text-2); }
+  .radio:has(input:checked) { border-color: var(--accent); }
+  .kbd {
+    display: inline-block; min-width: 26px; text-align: center; padding: 1px 7px; border-radius: 4px;
+    border: 1px solid var(--stroke-2); border-bottom-width: 2px; background: var(--card); font-size: 12px; font-weight: 600;
+  }
+  .capture { display: flex; gap: 6px; align-items: center; min-height: 34px; }
+
+  /* ---------- Diálogo (escuta) ---------- */
+  .modal-wrap { position: absolute; inset: 40px 0 0; display: none; place-items: center; background: rgba(0, 0, 0, .3); padding: 16px; }
+  .modal-wrap.open { display: grid; }
+  .modal {
+    width: min(460px, 100%); background: var(--win); border: 1px solid var(--stroke-2); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  .modal .inner { padding: 22px 24px; }
+  .modal .t { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .modal footer { padding: 14px 24px; background: var(--card-2); border-top: 1px solid var(--stroke); display: flex; gap: 8px; justify-content: flex-end; }
+  .ring { position: relative; width: 132px; height: 132px; margin: 18px auto 10px; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .num { position: absolute; inset: 0; display: grid; place-items: center; font-size: 34px; font-weight: 600; }
+  .ring .num small { display: block; font-size: 12px; font-weight: 400; color: var(--text-2); text-align: center; margin-top: -6px; }
+  .parts { margin-top: 12px; display: grid; gap: 6px; }
+  .part { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--card); border: 1px solid var(--stroke); border-radius: 6px; font-size: 13px; }
+  .part .s { margin-left: auto; font-size: 12px; }
+  .part .s.ok { color: var(--ok); }
+  .part .s.no { color: var(--text-3); }
+  .part .s.bad { color: var(--danger); }
+
+  /* ---------- Barra de tarefas, bandeja e toast ---------- */
+  .taskbar {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 48px; background: var(--taskbar);
+    border-top: 1px solid var(--stroke); display: flex; align-items: center; padding: 0 10px; gap: 4px;
+    backdrop-filter: blur(20px);
+  }
+  .taskbar .start { margin: 0 auto; display: flex; gap: 4px; }
+  .tb-btn { width: 40px; height: 40px; border-radius: 4px; border: 0; background: none; display: grid; place-items: center; cursor: pointer; color: var(--text); position: relative; }
+  .tb-btn:hover { background: var(--hover); }
+  .tb-btn.running::after { content: ""; position: absolute; bottom: 2px; left: 50%; width: 6px; height: 3px; margin-left: -3px; border-radius: 2px; background: var(--text-3); }
+  .tray { position: absolute; right: 10px; display: flex; align-items: center; gap: 2px; }
+  .tray .tray-icon { width: 32px; height: 40px; }
+  .tray .tray-icon.paused { opacity: .45; }
+  .tray .tray-icon.hl { outline: 2px solid var(--accent); outline-offset: -4px; }
+  .clock { font-size: 12px; text-align: right; padding: 0 8px; line-height: 1.3; }
+  .traymenu {
+    position: absolute; right: 52px; bottom: 54px; width: 264px; background: var(--win);
+    border: 1px solid var(--stroke-2); border-radius: 8px; box-shadow: var(--shadow); padding: 4px; display: none;
+  }
+  .traymenu.open { display: block; }
+  .traymenu .head { padding: 10px 12px 8px; border-bottom: 1px solid var(--stroke); margin-bottom: 4px; }
+  .traymenu .head .t { font-weight: 600; }
+  .traymenu button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; background: none; padding: 7px 12px; border-radius: 4px; cursor: pointer; }
+  .traymenu button:hover { background: var(--hover); }
+  .traymenu .check { width: 16px; color: var(--accent); }
+  .traymenu hr { border: 0; border-top: 1px solid var(--stroke); margin: 4px 0; }
+  .toast {
+    position: absolute; right: 12px; bottom: 60px; width: 340px; max-width: calc(100% - 24px); background: var(--win);
+    border: 1px solid var(--stroke-2); border-radius: 8px; box-shadow: var(--shadow); padding: 14px 16px;
+    display: flex; gap: 12px; transform: translateY(20px); opacity: 0; pointer-events: none; transition: all .25s;
+  }
+  .toast.open { transform: none; opacity: 1; }
+  .toast .t { font-weight: 600; }
+  .toast .d { font-size: 13px; color: var(--text-2); }
+  .closed-hint { max-width: 520px; margin: 120px auto 0; text-align: center; color: var(--text); }
+  .closed-hint p { color: var(--text-2); }
+
+  .paused-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+
+  @media (max-width: 720px) {
+    .desktop { padding: 12px 0 60px; }
+    .window { border-radius: 0; height: 680px; border-left: 0; border-right: 0; }
+    nav.side { width: 52px; }
+    nav.side button span.lbl { display: none; }
+    .content { padding: 18px 16px 24px; }
+    .crumbs { font-size: 22px; }
+    .row { grid-template-columns: 1fr 70px; }
+    .row .action { grid-column: 1 / -1; }
+    .row .chev, .row.head .h-action, .row.head .h-chev { display: none; }
+    .taskbar .start { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="demo">
+  <h1>RemapUSB · mockup</h1>
+  <p>Simulação clicável das telas. Nada lê o controle de verdade: "Gravar" e "Escutar" geram eventos falsos.</p>
+  <div class="group" role="group" aria-label="Cenário">
+    <span class="label">Cenário</span>
+    <button class="chip" data-scenario="first">Primeiro uso</button>
+    <button class="chip" data-scenario="saved">Controle salvo</button>
+    <button class="chip" data-scenario="offline">Controle desconectado</button>
+  </div>
+  <div class="group" role="group" aria-label="Tema">
+    <span class="label">Tema</span>
+    <button class="chip" data-theme-set="auto">Sistema</button>
+    <button class="chip" data-theme-set="light">Claro</button>
+    <button class="chip" data-theme-set="dark">Escuro</button>
+  </div>
+</header>
+
+<main class="desktop">
+  <div class="closed-hint" id="closedHint" hidden>
+    <p style="font-size:16px;color:var(--text)"><b>A janela foi fechada, mas o app continua rodando na bandeja.</b></p>
+    <p>Clique no ícone do controle, perto do relógio, para abrir o menu da bandeja.</p>
+  </div>
+
+  <div class="window" id="window">
+    <div class="titlebar">
+      <span id="tbIcon"></span>
+      <span>RemapUSB</span>
+      <div class="controls">
+        <button aria-label="Minimizar" data-act="close-window">&#x2013;</button>
+        <button aria-label="Maximizar">&#x25A1;</button>
+        <button class="close" aria-label="Fechar para a bandeja" title="Fecha a janela; o app continua na bandeja" data-act="close-window">&#x2715;</button>
+      </div>
+    </div>
+    <div class="appbody">
+      <nav class="side" id="nav"></nav>
+      <section class="content" id="view"></section>
+    </div>
+    <div class="scrim" id="scrim" data-act="close-drawer"></div>
+    <aside class="drawer" id="drawer" aria-label="Editar ação"></aside>
+    <div class="modal-wrap" id="modalWrap"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <div class="traymenu" id="traymenu" role="menu"></div>
+
+  <div class="taskbar">
+    <div class="start">
+      <button class="tb-btn" aria-label="Iniciar" id="startBtn"></button>
+      <button class="tb-btn running" aria-label="TubeTV" title="TubeTV"><span class="appicon" style="background:#e62117">▶</span></button>
+    </div>
+    <div class="tray">
+      <button class="tb-btn tray-icon" id="trayIcon" aria-label="RemapUSB na bandeja" title="RemapUSB" data-act="tray"></button>
+      <div class="clock">16:20<br>01/10/2026</div>
+    </div>
+  </div>
+</main>
+
+<script>
+(() => {
+  // ---------- Ícones ----------
+  const ico = {
+    remote: (s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="5"/><circle cx="12" cy="11" r="2.4"/><circle cx="12" cy="6" r=".6" fill="currentColor"/><path d="M10 16h4M10 18.5h4"/></svg>`,
+    devices: (s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="5" width="12" height="9" rx="1.5"/><rect x="17" y="8" width="4" height="11" rx="1.5"/><path d="M6 18h6M9 14v4"/></svg>`,
+    gear: (s = 18) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>`,
+    plus: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
+    rec: (s = 14) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="currentColor"/></svg>`,
+    chev: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>`,
+    info: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>`,
+    warn: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>`,
+    check: (s = 16) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>`,
+    win: (s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><g fill="#0078d4"><rect x="2" y="2" width="9.5" height="9.5" rx="1"/><rect x="12.5" y="2" width="9.5" height="9.5" rx="1"/><rect x="2" y="12.5" width="9.5" height="9.5" rx="1"/><rect x="12.5" y="12.5" width="9.5" height="9.5" rx="1"/></g></svg>`,
+  };
+
+  // ---------- Dados ----------
+  const APPS = [
+    { id: 'tubetv', name: 'TubeTV - Client for YT TV', kind: 'Store / MSIX', color: '#e62117', letter: '▶' },
+    { id: 'spotify', name: 'Spotify', kind: 'Store / MSIX', color: '#1db954', letter: 'S' },
+    { id: 'netflix', name: 'Netflix', kind: 'Store / MSIX', color: '#b20710', letter: 'N' },
+    { id: 'vlc', name: 'VLC media player', kind: '.exe', color: '#f08000', letter: 'V' },
+    { id: 'kodi', name: 'Kodi', kind: '.exe', color: '#17b2e7', letter: 'K' },
+    { id: 'obs', name: 'OBS Studio', kind: '.exe', color: '#302e31', letter: 'O' },
+  ];
+  const ACTIONS = [
+    { id: 'keep', label: 'Manter original' },
+    { id: 'none', label: 'Não fazer nada' },
+    { id: 'key', label: 'Enviar tecla ou atalho' },
+    { id: 'media', label: 'Tecla de mídia' },
+    { id: 'open', label: 'Abrir app' },
+    { id: 'close', label: 'Fechar app' },
+    { id: 'toggle', label: 'Abrir/fechar app (alternar)' },
+    { id: 'restart', label: 'Reiniciar app' },
+    { id: 'site', label: 'Abrir site' },
+    { id: 'file', label: 'Abrir arquivo ou pasta' },
+    { id: 'cmd', label: 'Executar comando' },
+  ];
+  const MEDIA = ['Play/Pause', 'Próxima faixa', 'Faixa anterior', 'Parar', 'Volume +', 'Volume −', 'Mudo'];
+  const RISK = {
+    Apps: 'baixo', BrowserHome: 'baixo', BrowserBack: 'baixo',
+    Backspace: 'alto', Delete: 'alto', Enter: 'alto', Up: 'alto', Down: 'alto', Left: 'alto', Right: 'alto',
+  };
+  const KEY_PT = { Apps: 'Menu', Backspace: 'Backspace', Delete: 'Delete', Enter: 'Enter', Up: 'Seta para cima', Down: 'Seta para baixo', Left: 'Seta para a esquerda', Right: 'Seta para a direita' };
+
+  const savedButtons = () => [
+    { id: 1, name: 'Home', part: 'midia', key: 'BrowserHome', code: 'uso 0x0223', action: { type: 'restart', app: 'tubetv' } },
+    { id: 2, name: 'Voltar', part: 'midia', key: 'BrowserBack', code: 'uso 0x0224', action: { type: 'key', keys: ['Esc'] } },
+    { id: 3, name: 'Menu de contexto', part: 'teclado', key: 'Apps', code: 'VK 0x5D', action: { type: 'media', media: 'Play/Pause' }, original: 'neutralizar' },
+    { id: 4, name: 'Engrenagem', part: 'teclado', key: 'Backspace', code: 'VK 0x08', action: { type: 'close', app: 'tubetv' }, original: 'passar' },
+    { id: 5, name: 'Entrada', part: 'teclado', key: 'Delete', code: 'VK 0x2E', action: { type: 'keep' } },
+    { id: 6, name: 'Volume +', part: 'midia', key: 'VolumeUp', code: 'uso 0x00E9', action: { type: 'keep' } },
+    { id: 7, name: 'Volume −', part: 'midia', key: 'VolumeDown', code: 'uso 0x00EA', action: { type: 'keep' } },
+    { id: 8, name: 'Mudo', part: 'midia', key: 'VolumeMute', code: 'uso 0x00E2', action: { type: 'keep' } },
+    { id: 9, name: 'OK', part: 'teclado', key: 'Enter', code: 'VK 0x0D', action: { type: 'keep' } },
+    { id: 10, name: 'Cima', part: 'teclado', key: 'Up', code: 'VK 0x26', action: { type: 'keep' } },
+    { id: 11, name: 'Baixo', part: 'teclado', key: 'Down', code: 'VK 0x28', action: { type: 'keep' } },
+    { id: 12, name: 'Esquerda', part: 'teclado', key: 'Left', code: 'VK 0x25', action: { type: 'keep' } },
+    { id: 13, name: 'Direita', part: 'teclado', key: 'Right', code: 'VK 0x27', action: { type: 'keep' } },
+  ];
+  // Sequência que a gravação simulada "recebe" do controle (inclui repetições).
+  const REC_SEQUENCE = [
+    { part: 'midia', key: 'BrowserHome', code: 'uso 0x0223', suggest: 'Início (navegador)' },
+    { part: 'midia', key: 'BrowserBack', code: 'uso 0x0224', suggest: 'Voltar (navegador)' },
+    { part: 'teclado', key: 'Apps', code: 'VK 0x5D', suggest: 'Menu' },
+    { part: 'midia', key: 'VolumeUp', code: 'uso 0x00E9', suggest: 'Volume +' },
+    { part: 'midia', key: 'BrowserHome', code: 'uso 0x0223' },
+    { part: 'teclado', key: 'Backspace', code: 'VK 0x08', suggest: 'Backspace' },
+    { part: 'teclado', key: 'Enter', code: 'VK 0x0D', suggest: 'Enter' },
+    { part: 'midia', key: 'VolumeMute', code: 'uso 0x00E2', suggest: 'Mudo' },
+    { part: 'teclado', key: 'Delete', code: 'VK 0x2E', suggest: 'Delete' },
+  ];
+
+  const state = {
+    scenario: 'saved',
+    view: 'devices',
+    windowOpen: true,
+    paused: false,
+    startup: true,
+    logFile: true,
+    device: null,
+    buttons: [],
+    recording: false,
+    recIndex: 0,
+    recTimer: null,
+    lastAdded: null,
+    lastFlash: null,
+    editing: null,
+    draft: null,
+    appQuery: '',
+    capturing: false,
+    listen: null,
+    windowsConfig: { applied: ['Menu'], pending: [] },
+  };
+
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const app = (id) => APPS.find((a) => a.id === id);
+  const keyLabel = (b) => KEY_PT[b.key] ?? b.key;
+
+  function setScenario(s) {
+    stopRecording();
+    stopListen();
+    state.scenario = s;
+    state.view = 'devices';
+    state.editing = null;
+    state.paused = false;
+    if (s === 'first') {
+      state.device = null;
+      state.buttons = [];
+      state.windowsConfig = { applied: [], pending: [] };
+    } else {
+      state.device = { name: 'Controle LE-7655', vid: '0627', pid: '697D', connected: s === 'saved', active: true };
+      state.buttons = savedButtons();
+      state.windowsConfig = { applied: ['Menu'], pending: [] };
+    }
+    document.querySelectorAll('[data-scenario]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scenario === s)));
+    if (s === 'offline') toast('Controle LE-7655 desconectado', 'Os remapeamentos voltam sozinhos quando ele for reconectado.');
+    render();
+  }
+
+  // ---------- Descrição de ação ----------
+  function describe(b) {
+    const a = b.action;
+    switch (a.type) {
+      case 'keep': return { main: 'Manter original', sub: '' };
+      case 'none': return { main: 'Não fazer nada', sub: '' };
+      case 'key': return { main: `Enviar ${a.keys?.length ? a.keys.join(' + ') : '(sem tecla)'}`, sub: '' };
+      case 'media': return { main: `Tecla de mídia: ${a.media}`, sub: '' };
+      case 'site': return { main: 'Abrir site', sub: a.url || '' };
+      case 'file': return { main: 'Abrir arquivo', sub: a.path || '' };
+      case 'cmd': return { main: 'Executar comando', sub: a.cmd || '' };
+      default: {
+        const label = ACTIONS.find((x) => x.id === a.type).label;
+        return { main: label, sub: app(a.app)?.name ?? '(escolha o app)' };
+      }
+    }
+  }
+  function originalNote(b) {
+    if (b.action.type === 'keep') return '';
+    if (b.part === 'midia') return 'tecla original bloqueada';
+    return b.original === 'neutralizar' ? 'tecla original neutralizada' : `${keyLabel(b)} também chega ao programa`;
+  }
+
+  // ---------- Render ----------
+  function render() {
+    $('#window').hidden = !state.windowOpen;
+    $('#closedHint').hidden = state.windowOpen;
+    $('#tbIcon').innerHTML = `<span style="color:var(--accent)">${ico.remote(16)}</span>`;
+    $('#startBtn').innerHTML = ico.win();
+    const tray = $('#trayIcon');
+    tray.innerHTML = ico.remote(18);
+    tray.classList.toggle('paused', state.paused);
+    tray.classList.toggle('hl', !state.windowOpen);
+
+    $('#nav').innerHTML = `
+      <button data-nav="devices" ${state.view !== 'settings' ? 'aria-current="page"' : ''}>${ico.devices()}<span class="lbl">Dispositivos</span></button>
+      <div class="spacer"></div>
+      <button data-nav="settings" ${state.view === 'settings' ? 'aria-current="page"' : ''}>${ico.gear()}<span class="lbl">Configurações</span></button>`;
+
+    const view = $('#view');
+    view.innerHTML = state.view === 'settings' ? viewSettings() : state.view === 'device' ? viewDevice() : viewDevices();
+    renderDrawer();
+    renderModal();
+    renderTray();
+  }
+
+  function pausedBar() {
+    return state.paused ? `<div class="note warn paused-bar">${ico.warn()}<div style="flex:1"><b>Remapeamento pausado.</b> Os botões do controle funcionam como se o app não existisse.</div><button class="btn" data-act="resume">Retomar</button></div>` : '';
+  }
+
+  function viewDevices() {
+    if (!state.device) {
+      return `<div class="crumbs">Dispositivos</div>
+        <div class="empty">
+          <div class="icon-tile">${ico.remote(30)}</div>
+          <div class="big">Nenhum dispositivo salvo</div>
+          <div>Clique em <b>Adicionar dispositivo</b> e conecte o controle USB nos 30 segundos seguintes.<br>O primeiro dispositivo conectado nesse tempo é o que fica salvo.</div>
+          <div style="margin-top:18px"><button class="btn primary" data-act="listen">${ico.plus()} Adicionar dispositivo</button></div>
+        </div>`;
+    }
+    const d = state.device;
+    const mapped = state.buttons.filter((b) => b.action.type !== 'keep').length;
+    return `<div class="crumbs">Dispositivos</div>
+      ${pausedBar()}
+      <div class="toolbar"><div class="grow" style="color:var(--text-2)">Controles salvos. Clique em um para ver e remapear os botões.</div>
+        <button class="btn" data-act="listen">${ico.plus()} Adicionar dispositivo</button></div>
+      <div class="card click" data-act="open-device">
+        <div class="icon-tile">${ico.remote(22)}</div>
+        <div class="grow">
+          <div class="title">${esc(d.name)}</div>
+          <div class="sub">VID_${d.vid} · PID_${d.pid} · ${state.buttons.length} botões gravados · ${mapped} remapeados</div>
+        </div>
+        <span class="status"><span class="dot ${d.connected ? 'ok' : 'off'}"></span>${d.connected ? 'Conectado' : 'Desconectado'}</span>
+        <label class="toggle" title="Ativar ou desativar os remapeamentos deste controle" data-stop><input type="checkbox" data-act="toggle-device" ${d.active ? 'checked' : ''}><span></span></label>
+        <span class="chev">${ico.chev()}</span>
+      </div>
+      ${!d.connected ? `<div class="note info" style="margin-top:12px">${ico.info()}<div>O controle está desconectado. Os remapeamentos ficam salvos e voltam a funcionar quando ele for reconectado.</div></div>` : ''}`;
+  }
+
+  function viewDevice() {
+    const d = state.device;
+    const rows = state.buttons.map((b) => {
+      const ds = describe(b);
+      const note = originalNote(b);
+      const cls = [b.id === state.lastAdded ? 'new' : '', b.id === state.lastFlash ? 'flash' : ''].join(' ');
+      return `<div class="row body ${cls}" data-edit="${b.id}">
+        <div class="name"><input value="${esc(b.name)}" data-rename="${b.id}" aria-label="Nome do botão" data-stop><div class="code">${esc(b.key)} · ${esc(b.code)}</div></div>
+        <div><span class="badge ${b.part}">${b.part === 'midia' ? 'Mídia' : 'Teclado'}</span></div>
+        <div class="action ${b.action.type === 'keep' ? 'keep' : ''}"><div class="main">${esc(ds.main)}</div><div style="font-size:12px">${esc([ds.sub, note].filter(Boolean).join(' · '))}</div></div>
+        <div class="chev">${ico.chev()}</div>
+      </div>`;
+    }).join('');
+
+    const recbar = state.recording ? `<div class="recbar"><span class="pulse"></span>
+        <div class="grow"><b>Gravando: aperte os botões do controle</b><div class="sub">Cada botão novo vira uma linha. Repetir um botão só destaca a linha que já existe. Teclas de outros teclados são ignoradas.</div></div>
+        <button class="btn primary" data-act="stop-rec">Concluir gravação</button></div>` : '';
+
+    const list = state.buttons.length
+      ? `<div class="table"><div class="row head"><div>Botão</div><div>Parte</div><div class="h-action">Ação</div><div class="h-chev"></div></div>${rows}</div>`
+      : `<div class="empty"><div class="icon-tile">${ico.rec(26)}</div><div class="big">Nenhum botão gravado ainda</div>
+          <div>Clique em <b>Gravar botões</b> e aperte cada botão do controle uma vez.<br>A lista começa vazia e vai sendo preenchida conforme os botões chegam.</div>
+          ${state.recording ? '' : `<div style="margin-top:18px"><button class="btn primary" data-act="start-rec">${ico.rec()} Gravar botões</button></div>`}</div>`;
+
+    return `<div class="crumbs"><button class="link" data-nav="devices">Dispositivos</button><span class="sep">›</span><span>${esc(d.name)}</span></div>
+      ${pausedBar()}
+      <div class="toolbar">
+        <span class="status"><span class="dot ${d.connected ? 'ok' : 'off'}"></span>${d.connected ? 'Conectado' : 'Desconectado'} · VID_${d.vid} · PID_${d.pid}</span>
+        <div class="grow"></div>
+        ${state.recording || !state.buttons.length ? '' : `<button class="btn rec" data-act="start-rec" ${d.connected ? '' : 'disabled title="Conecte o controle para gravar"'}>${ico.rec()} Gravar mais botões</button>`}
+      </div>
+      ${recbar}
+      ${list}
+      ${state.buttons.length && !state.recording ? `<div class="hint" style="margin-top:10px">Clique numa linha para escolher a ação. O nome do botão pode ser editado direto na lista.</div>` : ''}`;
+  }
+
+  function viewSettings() {
+    const wc = state.windowsConfig;
+    const neutral = state.buttons.filter((b) => b.part === 'teclado' && b.original === 'neutralizar' && b.action.type !== 'keep').map((b) => keyLabel(b));
+    const pending = neutral.filter((k) => !wc.applied.includes(k));
+    const extra = wc.applied.filter((k) => !neutral.includes(k));
+    const dirty = pending.length || extra.length;
+    return `<div class="crumbs">Configurações</div>
+      <div class="card"><div class="grow"><div class="title">Iniciar com o Windows</div><div class="sub">O app abre minimizado na bandeja quando você entra no Windows.</div></div>
+        <label class="toggle"><input type="checkbox" data-act="toggle-startup" ${state.startup ? 'checked' : ''}><span></span></label></div>
+      <div class="card"><div class="grow"><div class="title">Registrar log em arquivo</div><div class="sub">Conexão e desconexão do controle, botões recebidos e ações disparadas. Teclas de outros teclados não entram.</div></div>
+        <button class="btn subtle">Abrir pasta</button>
+        <label class="toggle"><input type="checkbox" data-act="toggle-log" ${state.logFile ? 'checked' : ''}><span></span></label></div>
+
+      <h3>Teclas neutralizadas no Windows</h3>
+      <div class="card" style="align-items:flex-start">
+        <div class="grow">
+          <div class="title">${wc.applied.length ? `Aplicado: ${wc.applied.join(', ')}` : 'Nenhuma tecla neutralizada'}</div>
+          <div class="sub">Botões da parte de teclado marcados como "Neutralizar" precisam desta configuração do Windows. Ela vale para todos os teclados e só entra em vigor depois de reiniciar.</div>
+          ${dirty ? `<div class="note warn" style="margin-top:10px">${ico.warn()}<div>${pending.length ? `Falta aplicar: <b>${pending.join(', ')}</b>. ` : ''}${extra.length ? `Não é mais usada: <b>${extra.join(', ')}</b>. ` : ''}Aplicar pede permissão de administrador e reinício.</div></div>` : ''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn primary" data-act="apply-windows" ${dirty ? '' : 'disabled'}>Aplicar (administrador)</button>
+          <button class="btn" data-act="undo-windows" ${wc.applied.length ? '' : 'disabled'}>Desfazer tudo</button>
+        </div>
+      </div>
+
+      <h3>Sobre</h3>
+      <div class="card"><div class="grow"><div class="title">RemapUSB</div><div class="sub">Mockup das telas. Versão de teste, sem leitura real do controle.</div></div></div>`;
+  }
+
+  // ---------- Editor de ação ----------
+  function openEditor(id) {
+    const b = state.buttons.find((x) => x.id === id);
+    state.editing = id;
+    state.draft = JSON.parse(JSON.stringify({ action: b.action, original: b.original ?? 'passar' }));
+    state.appQuery = '';
+    state.capturing = false;
+    renderDrawer();
+  }
+
+  function renderDrawer() {
+    const drawer = $('#drawer');
+    const open = state.editing != null;
+    drawer.classList.toggle('open', open);
+    $('#scrim').classList.toggle('open', open);
+    if (!open) { drawer.innerHTML = ''; return; }
+
+    const b = state.buttons.find((x) => x.id === state.editing);
+    const a = state.draft.action;
+    const appTypes = ['open', 'close', 'toggle', 'restart'];
+    let fields = '';
+
+    if (appTypes.includes(a.type)) {
+      const q = state.appQuery.toLowerCase();
+      const items = APPS.filter((x) => x.name.toLowerCase().includes(q)).map((x) => `
+        <div class="appitem" role="option" aria-selected="${a.app === x.id}" data-app="${x.id}">
+          <span class="appicon" style="background:${x.color}">${x.letter}</span><span>${esc(x.name)}</span><span class="kind">${x.kind}</span></div>`).join('');
+      const tips = {
+        open: 'Se o app já estiver aberto, traz a janela para a frente.',
+        close: 'Pede para o app fechar e, se ele não fechar em alguns segundos, encerra à força. Se não estiver aberto, não faz nada.',
+        toggle: 'Abre se estiver fechado; fecha se estiver aberto.',
+        restart: 'Fecha (se estiver aberto) e abre de novo.',
+      };
+      fields = `<div class="field"><span class="lbl">App</span>
+          <input class="input" placeholder="Procurar app instalado" value="${esc(state.appQuery)}" data-appq>
+          <div class="applist" role="listbox">${items || '<div class="appitem" style="cursor:default;color:var(--text-3)">Nenhum app encontrado</div>'}</div>
+          <div style="margin-top:6px"><button class="btn subtle">Procurar .exe…</button></div>
+          <div class="hint">${tips[a.type]} Apps da Store e MSIX são abertos pelo pacote, então continuam funcionando depois de atualizados.</div></div>`;
+    } else if (a.type === 'key') {
+      const keys = a.keys?.length ? a.keys.map((k) => `<span class="kbd">${esc(k)}</span>`).join(' + ') : '<span style="color:var(--text-3)">nenhuma</span>';
+      fields = `<div class="field"><span class="lbl">Tecla ou atalho</span>
+          <div class="capture">${keys}<div style="flex:1"></div>
+          <button class="btn ${state.capturing ? 'primary' : ''}" data-act="capture">${state.capturing ? 'Pressione no teclado…' : 'Capturar'}</button></div>
+          <div class="hint">Clique em Capturar e pressione a tecla ou o atalho no teclado do PC (ex.: Ctrl + Shift + T).</div></div>`;
+    } else if (a.type === 'media') {
+      fields = `<div class="field"><label for="mediaSel">Tecla de mídia</label>
+          <select class="input" id="mediaSel" data-media>${MEDIA.map((m) => `<option ${a.media === m ? 'selected' : ''}>${m}</option>`).join('')}</select></div>`;
+    } else if (a.type === 'site') {
+      fields = `<div class="field"><label for="urlIn">Endereço</label><input class="input" id="urlIn" placeholder="https://" value="${esc(a.url ?? '')}" data-field="url">
+          <div class="hint">Abre no navegador padrão.</div></div>`;
+    } else if (a.type === 'file') {
+      fields = `<div class="field"><label for="pathIn">Arquivo ou pasta</label><div style="display:flex;gap:6px"><input class="input" id="pathIn" placeholder="C:\\Videos\\filme.mp4" value="${esc(a.path ?? '')}" data-field="path"><button class="btn">Procurar…</button></div>
+          <div class="hint">Abre com o programa padrão do Windows para esse tipo de arquivo.</div></div>`;
+    } else if (a.type === 'cmd') {
+      fields = `<div class="field"><label for="cmdIn">Comando</label><input class="input" id="cmdIn" placeholder="powershell -File C:\\scripts\\tv.ps1" value="${esc(a.cmd ?? '')}" data-field="cmd">
+          <div class="hint">Roda sem abrir janela, com as permissões do seu usuário.</div></div>`;
+    } else if (a.type === 'none') {
+      fields = `<div class="hint" style="margin-top:12px">O botão fica sem função. ${b.part === 'midia' ? 'A tecla original é bloqueada.' : 'Para que a tecla original também não chegue aos programas, escolha "Neutralizar" abaixo.'}</div>`;
+    } else {
+      fields = `<div class="hint" style="margin-top:12px">O botão continua fazendo o que já fazia, como se o app não existisse.</div>`;
+    }
+
+    let original = '';
+    if (a.type !== 'keep') {
+      if (b.part === 'midia') {
+        original = `<h3>Tecla original</h3><div class="note ok">${ico.check()}<div><b>Bloqueada automaticamente.</b> Botão de mídia: só a nova ação acontece${b.key === 'BrowserHome' ? ' (o navegador não abre mais)' : ''}.</div></div>`;
+      } else {
+        const k = keyLabel(b);
+        const risk = RISK[b.key] ?? 'alto';
+        const neutralWarn = risk === 'baixo'
+          ? `Custo baixo: a tecla ${k} é pouco usada.`
+          : `<b>Custo alto:</b> ${k} é uma tecla de uso diário. Com o RemapUSB fechado, ela para de funcionar em todos os teclados.`;
+        original = `<h3>Tecla original</h3>
+          <div class="hint" style="margin:0 0 8px">Este botão é da parte de <b>teclado</b> do controle. O Windows não diz de qual teclado veio a tecla a tempo de bloqueá-la, então é preciso escolher:</div>
+          <label class="radio"><input type="radio" name="orig" value="passar" ${state.draft.original === 'passar' ? 'checked' : ''}>
+            <div><div class="t">Deixar passar <span style="font-weight:400;color:var(--text-3)">(padrão)</span></div>
+            <div class="d">A nova ação acontece e a tecla ${k} também chega ao programa em foco.</div></div></label>
+          <label class="radio"><input type="radio" name="orig" value="neutralizar" ${state.draft.original === 'neutralizar' ? 'checked' : ''}>
+            <div><div class="t">Neutralizar</div>
+            <div class="d">A tecla ${k} vira uma tecla sem uso em todos os teclados; o app devolve ${k} aos outros teclados. Pede administrador e reinício.</div></div></label>
+          ${state.draft.original === 'neutralizar'
+            ? `<div class="note ${risk === 'baixo' ? 'info' : 'danger'}" style="margin-top:8px">${risk === 'baixo' ? ico.info() : ico.warn()}<div>${neutralWarn}</div></div>`
+            : risk === 'alto' ? `<div class="note warn" style="margin-top:8px">${ico.warn()}<div>Se outro programa estiver em foco, ele recebe ${k}.${b.key === 'Delete' ? ' No Explorer, com um arquivo selecionado, o arquivo vai para a lixeira.' : ''}</div></div>` : ''}`;
+      }
+    }
+
+    drawer.innerHTML = `<header><div class="t">${esc(b.name)}</div>
+        <div class="status" style="margin-top:4px"><span class="badge ${b.part}">${b.part === 'midia' ? 'Mídia' : 'Teclado'}</span> ${esc(b.key)} · ${esc(b.code)}</div></header>
+      <div class="scroll">
+        <div class="field"><label for="actSel">Ação</label>
+          <select class="input" id="actSel" data-actsel>${ACTIONS.map((x) => `<option value="${x.id}" ${a.type === x.id ? 'selected' : ''}>${x.label}</option>`).join('')}</select></div>
+        ${fields}
+        ${original}
+      </div>
+      <footer><button class="btn" data-act="close-drawer">Cancelar</button><button class="btn primary" data-act="save-drawer">Salvar</button></footer>`;
+  }
+
+  // ---------- Escuta ----------
+  function startListen() {
+    stopListen();
+    state.listen = { seconds: 30, found: false, name: 'Controle LE-7655', timer: null };
+    state.listen.timer = setInterval(() => {
+      if (!state.listen || state.listen.found) return;
+      state.listen.seconds -= 1;
+      if (state.listen.seconds <= 0) { clearInterval(state.listen.timer); state.listen.timeout = true; }
+      renderModal();
+    }, 1000);
+    renderModal();
+  }
+  function stopListen() {
+    if (state.listen?.timer) clearInterval(state.listen.timer);
+    state.listen = null;
+  }
+
+  function renderModal() {
+    const wrap = $('#modalWrap');
+    const l = state.listen;
+    wrap.classList.toggle('open', !!l);
+    if (!l) { $('#modal').innerHTML = ''; return; }
+
+    if (l.found) {
+      $('#modal').innerHTML = `<div class="inner">
+          <div class="t">Dispositivo encontrado</div>
+          <div style="color:var(--text-2)">USB Composite Device · VID_0627 · PID_697D</div>
+          <div class="field"><label for="devName">Nome</label><input class="input" id="devName" value="${esc(l.name)}" data-devname></div>
+          <div class="field" style="margin-bottom:0"><span class="lbl">Partes encontradas</span>
+            <div class="parts">
+              <div class="part"><span class="badge teclado">Teclado</span>setas, OK, Menu…<span class="s ok">remapeável</span></div>
+              <div class="part"><span class="badge midia">Mídia</span>Home, Voltar, volume…<span class="s ok">remapeável</span></div>
+              <div class="part"><span class="badge" style="background:var(--hover)">Mouse</span>ponteiro<span class="s no">ignorado</span></div>
+              <div class="part"><span class="badge" style="background:var(--danger-soft);color:var(--danger)">Energia</span>Power<span class="s bad">não suportado</span></div>
+            </div></div>
+        </div>
+        <footer><button class="btn" data-act="cancel-listen">Descartar</button><button class="btn primary" data-act="save-device">Salvar e gravar botões</button></footer>`;
+      return;
+    }
+
+    const total = 2 * Math.PI * 58;
+    const frac = Math.max(l.seconds, 0) / 30;
+    $('#modal').innerHTML = `<div class="inner" style="text-align:center">
+        <div class="t">${l.timeout ? 'Nenhum dispositivo conectado' : 'Conecte o dispositivo agora'}</div>
+        <div style="color:var(--text-2)">${l.timeout ? 'Ninguém foi conectado nos 30 segundos. Você pode tentar de novo.' : 'O primeiro dispositivo USB conectado nos próximos 30 segundos será salvo. Se ele já estiver plugado, tire e coloque de novo.'}</div>
+        <div class="ring"><svg width="132" height="132" viewBox="0 0 132 132">
+          <circle cx="66" cy="66" r="58" fill="none" stroke="var(--stroke)" stroke-width="8"/>
+          <circle cx="66" cy="66" r="58" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round"
+            stroke-dasharray="${total}" stroke-dashoffset="${total * (1 - frac)}" style="transition:stroke-dashoffset 1s linear"/></svg>
+          <div class="num"><div>${Math.max(l.seconds, 0)}<small>segundos</small></div></div></div>
+        ${l.timeout ? '' : `<button class="btn subtle" data-act="simulate-plug" style="margin:auto">Simular: conectar o controle</button>`}
+      </div>
+      <footer><button class="btn" data-act="cancel-listen">Cancelar</button>${l.timeout ? '<button class="btn primary" data-act="listen">Tentar de novo</button>' : ''}</footer>`;
+  }
+
+  // ---------- Gravação ----------
+  function startRecording() {
+    state.recording = true;
+    state.recIndex = 0;
+    render();
+    state.recTimer = setInterval(() => {
+      if (state.recIndex >= REC_SEQUENCE.length) { stopRecording(); render(); return; }
+      const ev = REC_SEQUENCE[state.recIndex++];
+      const existing = state.buttons.find((b) => b.key === ev.key && b.part === ev.part);
+      state.lastAdded = null;
+      state.lastFlash = null;
+      if (existing) {
+        state.lastFlash = existing.id;
+      } else {
+        const id = Math.max(0, ...state.buttons.map((b) => b.id)) + 1;
+        state.buttons.push({ id, name: ev.suggest ?? ev.key, part: ev.part, key: ev.key, code: ev.code, action: { type: 'keep' } });
+        state.lastAdded = id;
+      }
+      render();
+    }, 1300);
+  }
+  function stopRecording() {
+    if (state.recTimer) clearInterval(state.recTimer);
+    state.recTimer = null;
+    state.recording = false;
+    state.lastAdded = null;
+    state.lastFlash = null;
+  }
+
+  // ---------- Bandeja e toast ----------
+  function renderTray() {
+    const d = state.device;
+    $('#traymenu').innerHTML = `<div class="head"><div class="t">RemapUSB</div>
+        <div class="status">${d ? `<span class="dot ${d.connected ? 'ok' : 'off'}"></span>${esc(d.name)} · ${d.connected ? 'conectado' : 'desconectado'}` : 'Nenhum dispositivo salvo'}${state.paused ? ' · pausado' : ''}</div></div>
+      <button data-act="open-window"><span class="check"></span>Abrir RemapUSB</button>
+      <button data-act="pause"><span class="check"></span>${state.paused ? 'Retomar remapeamento' : 'Pausar remapeamento'}</button>
+      <button data-act="toggle-startup"><span class="check">${state.startup ? ico.check(14) : ''}</span>Iniciar com o Windows</button>
+      <hr><button data-act="quit"><span class="check"></span>Sair</button>`;
+  }
+  let toastTimer;
+  function toast(title, text) {
+    const t = $('#toast');
+    t.innerHTML = `<span style="color:var(--accent)">${ico.remote(22)}</span><div><div class="t">${esc(title)}</div><div class="d">${esc(text)}</div><div class="d" style="font-size:11px;margin-top:4px">RemapUSB</div></div>`;
+    t.classList.add('open');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('open'), 4200);
+  }
+
+  // ---------- Eventos ----------
+  document.addEventListener('click', (e) => {
+    const t = e.target;
+    const scen = t.closest('[data-scenario]');
+    if (scen) return setScenario(scen.dataset.scenario);
+    const th = t.closest('[data-theme-set]');
+    if (th) return setTheme(th.dataset.themeSet);
+
+    if (!t.closest('#traymenu') && !t.closest('#trayIcon')) $('#traymenu').classList.remove('open');
+
+    const nav = t.closest('[data-nav]');
+    if (nav) { stopRecording(); state.view = nav.dataset.nav === 'devices' ? 'devices' : 'settings'; return render(); }
+
+    const appEl = t.closest('[data-app]');
+    if (appEl) { state.draft.action.app = appEl.dataset.app; return renderDrawer(); }
+
+    if (t.closest('[data-stop]') && !t.closest('[data-act]')) return;
+
+    const actEl = t.closest('[data-act]');
+    const act = actEl?.dataset.act;
+    if (!act) {
+      const row = t.closest('[data-edit]');
+      if (row && !state.recording) openEditor(Number(row.dataset.edit));
+      return;
+    }
+
+    switch (act) {
+      case 'tray': $('#traymenu').classList.toggle('open'); break;
+      case 'open-window': state.windowOpen = true; $('#traymenu').classList.remove('open'); render(); break;
+      case 'close-window': state.windowOpen = false; stopRecording(); state.editing = null; render(); toast('RemapUSB continua rodando', 'O app fica na bandeja. Clique no ícone perto do relógio para abrir.'); break;
+      case 'pause': state.paused = !state.paused; $('#traymenu').classList.remove('open'); render(); toast(state.paused ? 'Remapeamento pausado' : 'Remapeamento retomado', state.paused ? 'Os botões do controle funcionam como se o app não existisse.' : 'Os botões remapeados voltaram a funcionar.'); break;
+      case 'resume': state.paused = false; render(); break;
+      case 'toggle-startup': state.startup = !state.startup; render(); break;
+      case 'toggle-log': state.logFile = !state.logFile; break;
+      case 'quit': $('#traymenu').classList.remove('open'); toast('No app de verdade, o RemapUSB fecharia', 'Os botões do controle voltariam ao normal até você abrir o app de novo.'); break;
+      case 'listen': startListen(); break;
+      case 'cancel-listen': stopListen(); renderModal(); break;
+      case 'simulate-plug': state.listen.found = true; clearInterval(state.listen.timer); renderModal(); break;
+      case 'save-device': {
+        state.device = { name: state.listen.name || 'Controle', vid: '0627', pid: '697D', connected: true, active: true };
+        state.buttons = [];
+        stopListen();
+        state.view = 'device';
+        render();
+        toast(`${state.device.name} salvo`, 'Agora grave os botões apertando cada um uma vez.');
+        break;
+      }
+      case 'open-device': state.view = 'device'; render(); break;
+      case 'toggle-device': state.device.active = actEl.checked; break;
+      case 'start-rec': startRecording(); break;
+      case 'stop-rec': stopRecording(); render(); break;
+      case 'close-drawer': state.editing = null; renderDrawer(); break;
+      case 'save-drawer': {
+        const b = state.buttons.find((x) => x.id === state.editing);
+        b.action = state.draft.action;
+        if (b.part === 'teclado') b.original = state.draft.original;
+        state.editing = null;
+        render();
+        break;
+      }
+      case 'capture': state.capturing = !state.capturing; renderDrawer(); break;
+      case 'apply-windows': {
+        state.windowsConfig.applied = state.buttons.filter((b) => b.part === 'teclado' && b.original === 'neutralizar' && b.action.type !== 'keep').map(keyLabel);
+        render();
+        toast('Reinicie o Windows', 'A configuração foi gravada e entra em vigor depois de reiniciar.');
+        break;
+      }
+      case 'undo-windows': state.windowsConfig.applied = []; render(); toast('Reinicie o Windows', 'As teclas voltam ao normal depois de reiniciar.'); break;
+    }
+  });
+
+  document.addEventListener('change', (e) => {
+    const t = e.target;
+    if (t.matches('[data-actsel]')) {
+      const type = t.value;
+      const prev = state.draft.action;
+      state.draft.action = { type, app: prev.app, keys: prev.keys, media: prev.media ?? 'Play/Pause' };
+      state.capturing = false;
+      renderDrawer();
+    } else if (t.matches('[data-media]')) {
+      state.draft.action.media = t.value;
+    } else if (t.name === 'orig') {
+      state.draft.original = t.value;
+      renderDrawer();
+    }
+  });
+
+  document.addEventListener('input', (e) => {
+    const t = e.target;
+    if (t.matches('[data-rename]')) {
+      const b = state.buttons.find((x) => x.id === Number(t.dataset.rename));
+      b.name = t.value;
+    } else if (t.matches('[data-appq]')) {
+      state.appQuery = t.value;
+      const pos = t.selectionStart;
+      renderDrawer();
+      const n = $('[data-appq]');
+      n.focus();
+      n.setSelectionRange(pos, pos);
+    } else if (t.matches('[data-field]')) {
+      state.draft.action[t.dataset.field] = t.value;
+    } else if (t.matches('[data-devname]')) {
+      state.listen.name = t.value;
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (state.capturing && state.editing != null) {
+      e.preventDefault();
+      if (['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) return;
+      const names = { ' ': 'Espaço', Escape: 'Esc', ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→' };
+      const k = names[e.key] ?? (e.key.length === 1 ? e.key.toUpperCase() : e.key);
+      state.draft.action.keys = [e.ctrlKey && 'Ctrl', e.shiftKey && 'Shift', e.altKey && 'Alt', e.metaKey && 'Win', k].filter(Boolean);
+      state.capturing = false;
+      renderDrawer();
+      return;
+    }
+    if (e.key === 'Escape') {
+      if (state.editing != null) { state.editing = null; renderDrawer(); }
+      else if (state.listen) { stopListen(); renderModal(); }
+    }
+  });
+
+  // ---------- Tema ----------
+  function setTheme(mode) {
+    if (mode === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', mode);
+    document.querySelectorAll('[data-theme-set]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.themeSet === mode)));
+    try { localStorage.setItem('remapusb-mockup-theme', mode); } catch {}
+  }
+  let savedTheme = 'auto';
+  try { savedTheme = localStorage.getItem('remapusb-mockup-theme') || 'auto'; } catch {}
+  setTheme(savedTheme);
+
+  setScenario('saved');
+})();
+</script>
+</body>
+</html>
