@@ -9,11 +9,24 @@
 
 #define AppName "RemapUSB"
 #define AppExe "RemapUSB.exe"
-#define PublishDir AddBackslash(SourcePath) + "publish"
+; Onde procurar o app publicado: a pasta do perfil win-x64 e, se não existir, a pasta padrão
+; que o Visual Studio usa quando a publicação é feita por um perfil criado no assistente.
+#define PerfilDir AddBackslash(SourcePath) + "publish"
+#define PadraoVsDir AddBackslash(SourcePath) + "..\src\RemapUSB.App\bin\Release\net10.0-windows\win-x64\publish"
 
-; Sem o .exe publicado a versão sai vazia e o Inno só reclama do AppVersion; melhor dizer o que falta.
-#if !FileExists(AddBackslash(PublishDir) + AppExe)
-  #error "Não achei installer\publish\RemapUSB.exe. Publique antes: Visual Studio > botão direito em RemapUSB.App > Publicar > perfil win-x64 > Publicar."
+#if FileExists(AddBackslash(PerfilDir) + AppExe)
+  #define PublishDir PerfilDir
+#elif FileExists(AddBackslash(PadraoVsDir) + AppExe)
+  #define PublishDir PadraoVsDir
+#else
+  ; Sem o .exe publicado a versão sai vazia e o Inno só reclama do AppVersion; melhor dizer o que falta.
+  #error "Não achei o RemapUSB.exe publicado. No Visual Studio: botão direito em RemapUSB.App > Publicar, escolha o perfil win-x64 e clique em Publicar."
+#endif
+
+; Publicação que depende do .NET instalado traz o RemapUSB.dll ao lado do .exe. Esse instalador
+; não rodaria na máquina de quem não tem o .NET 10, então é melhor parar aqui.
+#if FileExists(AddBackslash(PublishDir) + "RemapUSB.dll")
+  #error "A publicação em " + PublishDir + " depende do .NET instalado. Publique com o perfil win-x64 (autossuficiente, arquivo único)."
 #endif
 
 #define AppVersion GetVersionNumbersString(AddBackslash(PublishDir) + AppExe)
