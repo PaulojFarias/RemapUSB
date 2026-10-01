@@ -268,13 +268,18 @@ internal sealed class Remapper : IDisposable
     {
         var now = RawInputSource.Now;
 
-        // Raw do dispositivo sem a tecla correspondente no hook: o Windows não chamou o hook a tempo
-        // (ou o pulou), e a tecla original pode ter chegado aos programas.
+        // Raw do dispositivo sem a tecla correspondente no hook: o Windows não passou a tecla pelo
+        // hook. Hipótese, ainda não confirmada: com a janela do RemapUSB em foco, ela recebe um
+        // WM_APPCOMMAND no lugar da tecla. A ação dispara assim mesmo; a tecla original pode ter
+        // chegado aos programas. O "em foco" do log serve para confirmar a hipótese.
         foreach (var recent in _recent.Where(r => now - r.At > WindowMs).ToList())
         {
             _recent.Remove(recent);
-            if (!recent.IsUp)
-                Log.Write("HOOK", $"{recent.Button.Name}: o Raw chegou, mas o hook não recebeu a tecla em {WindowMs} ms");
+            if (recent.IsUp)
+                continue;
+            Log.Write("HOOK", $"{recent.Button.Name}: o Raw chegou, mas o hook não recebeu a tecla em {WindowMs} ms; "
+                + $"em foco: {ForegroundDescription()}. Ação disparada assim mesmo");
+            Consume(recent.Button, isUp: false);
         }
 
         foreach (var pending in _pending.Where(p => now - p.At > WindowMs).ToList())

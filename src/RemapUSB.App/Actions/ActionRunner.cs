@@ -158,6 +158,19 @@ internal static class ActionRunner
         foreach (var hwnd in windows)
             PostMessage(hwnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 
+        if (windows.Count == 0)
+        {
+            // Sem janela para pedir, esperar só atrasa: encerra já, e registra o que havia na tela.
+            Log.Write("AÇÃO", $"{app.Name}: nenhuma janela encontrada para pedir o fechamento. {DescribeWindows(ids)}");
+            foreach (var process in processes)
+            {
+                process.Kill(entireProcessTree: true);
+                process.WaitForExit(3000);
+            }
+            Log.Write("AÇÃO", $"{app.Name} encerrado à força");
+            return;
+        }
+
         var deadline = DateTime.UtcNow.AddSeconds(3);
         foreach (var process in processes)
         {
@@ -214,6 +227,36 @@ internal static class ActionRunner
             return true;
         }, IntPtr.Zero);
         return result;
+    }
+
+    /// <summary>Diagnóstico: janelas dos processos do app e molduras UWP, para entender por que nenhuma serviu.</summary>
+    private static string DescribeWindows(HashSet<uint> processIds)
+    {
+        var own = new List<string>();
+        var frames = new List<string>();
+        EnumWindows((hwnd, _) =>
+        {
+            GetWindowThreadProcessId(hwnd, out var pid);
+            var cls = ClassName(hwnd);
+            var flags = $"{(IsWindowVisible(hwnd) ? "visível" : "oculta")}{(GetWindow(hwnd, GW_OWNER) != IntPtr.Zero ? ", com dono" : "")}";
+            if (processIds.Contains(pid))
+                own.Add($"{cls} ({flags})");
+            else if (cls == "ApplicationFrameWindow")
+            {
+                var children = new List<string>();
+                EnumChildWindows(hwnd, (child, _) =>
+                {
+                    GetWindowThreadProcessId(child, out var childPid);
+                    children.Add($"{ClassName(child)}{(processIds.Contains(childPid) ? "*" : "")}");
+                    return true;
+                }, IntPtr.Zero);
+                frames.Add($"[{flags}: {string.Join(", ", children)}]");
+            }
+            return true;
+        }, IntPtr.Zero);
+
+        return $"Janelas do app: {(own.Count == 0 ? "nenhuma" : string.Join("; ", own.Take(10)))}. "
+            + $"Molduras UWP (* = do app): {(frames.Count == 0 ? "nenhuma" : string.Join(" ", frames.Take(10)))}";
     }
 
     private static void Shell(string target, string buttonName)

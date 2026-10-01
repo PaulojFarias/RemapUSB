@@ -14,6 +14,24 @@
     <NoWarn>$(NoWarn);WPF0001</NoWarn>
   </PropertyGroup>
 
+  <!--
+    Identifica o build no log: commit do git, se havia alteração não commitada e a hora da compilação.
+    Sem git (ou fora do repositório), o app mostra "desconhecido".
+  -->
+  <Target Name="RemapUsbBuildInfo" BeforeTargets="GetAssemblyAttributes">
+    <Exec Command="git rev-parse --short HEAD" ConsoleToMSBuild="true" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="RemapUsbCommit" />
+    </Exec>
+    <Exec Command="git status --porcelain --untracked-files=no" ConsoleToMSBuild="true" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="RemapUsbDirty" />
+    </Exec>
+    <ItemGroup>
+      <AssemblyMetadata Include="GitCommit" Value="$(RemapUsbCommit)" />
+      <AssemblyMetadata Include="GitDirty" Value="true" Condition="'$(RemapUsbDirty)' != ''" />
+      <AssemblyMetadata Include="BuildTime" Value="$([System.DateTime]::Now.ToString('yyyy-MM-dd HH:mm:ss'))" />
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
     <!-- Evita conflito de nomes entre WPF e WinForms (Application, Button...). -->
     <Using Remove="System.Windows.Forms" />

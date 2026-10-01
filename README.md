@@ -51,7 +51,10 @@ O hook de teclado e o Raw Input rodam numa thread própria, de prioridade alta, 
 |---|---|
 | `chegou ao hook com N ms de atraso` | o Windows demorou mais de 40 ms para chamar o hook |
 | `segurada antes do Raw` | a tecla chegou ao hook antes do Raw do controle; o app espera até 60 ms |
-| `o Raw chegou, mas o hook não recebeu a tecla` | o Windows não passou a tecla pelo hook a tempo: a tecla original pode ter chegado ao programa (ex.: o navegador abrir no Home) |
+| `o Raw chegou, mas o hook não recebeu a tecla` | o Windows não passou a tecla pelo hook: a ação dispara assim mesmo, e a linha diz qual janela estava em foco |
+| `[APPCOMMAND] janela do RemapUSB recebeu ...` | com a janela do app em foco, o Windows mandou o botão como comando de app; se o botão está remapeado, o comando é descartado (o navegador não abre) |
+
+A primeira linha do log traz o build: commit do git, se havia alterações não commitadas e a hora da compilação. A mesma informação aparece em Configurações, em Sobre.
 
 ### Como o app trata cada botão
 

@@ -60,6 +60,19 @@ internal static class KeyNames
     /// <summary>Teclas que dá para neutralizar sem custo grande: quase ninguém usa.</summary>
     private static readonly HashSet<ushort> LowRiskVks = [0x5D, 0x5B, 0x5C, 0xAA, 0xAB, 0xB4, 0xB5, 0xB6, 0xB7];
 
+    /// <summary>
+    /// Comando de app (WM_APPCOMMAND) → VK da tecla equivalente. O Windows manda o comando direto
+    /// para a janela em foco em vez de passar a tecla pelo hook em alguns casos.
+    /// </summary>
+    private static readonly Dictionary<int, ushort> AppCommandToVk = new()
+    {
+        [1] = 0xA6, [2] = 0xA7, [3] = 0xA8, [4] = 0xA9, [5] = 0xAA, [6] = 0xAB, [7] = 0xAC,
+        [8] = 0xAD, [9] = 0xAE, [10] = 0xAF, [11] = 0xB0, [12] = 0xB1, [13] = 0xB2, [14] = 0xB3,
+        [15] = 0xB4, [16] = 0xB5, [17] = 0xB6, [18] = 0xB7,
+    };
+
+    public static ushort? VkForAppCommand(int command) => AppCommandToVk.TryGetValue(command, out var vk) ? vk : null;
+
     public static ushort? VkForConsumer(ushort usage) => ConsumerToVk.TryGetValue(usage, out var vk) ? vk : null;
 
     public static string ConsumerName(ushort usage) =>

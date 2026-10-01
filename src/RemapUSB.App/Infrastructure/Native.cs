@@ -187,6 +187,31 @@ internal static class Native
         return SetProcessInformation(GetCurrentProcess(), ProcessPowerThrottling, ref state, (uint)Marshal.SizeOf<PROCESS_POWER_THROTTLING_STATE>());
     }
 
+    public const int WM_APPCOMMAND = 0x0319;
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetForegroundWindow();
+
+    /// <summary>Quem está em foco, para o log: nome do processo, e se é o próprio app.</summary>
+    public static string ForegroundDescription()
+    {
+        var hwnd = GetForegroundWindow();
+        if (hwnd == IntPtr.Zero)
+            return "nenhuma janela";
+        GetWindowThreadProcessId(hwnd, out var pid);
+        if (pid == Environment.ProcessId)
+            return "a janela do RemapUSB";
+        try
+        {
+            using var process = System.Diagnostics.Process.GetProcessById((int)pid);
+            return $"{process.ProcessName} ({ClassName(hwnd)})";
+        }
+        catch (ArgumentException)
+        {
+            return $"PID {pid}";
+        }
+    }
+
     public static string ClassName(IntPtr hwnd)
     {
         var buffer = new StringBuilder(256);

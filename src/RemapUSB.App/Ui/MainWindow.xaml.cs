@@ -47,8 +47,36 @@ public partial class MainWindow : Window
         S.Recorded += OnRecorded;
         S.StateChanged += () => Dispatcher.BeginInvoke(Refresh);
 
-        AboutText.Text = $"Configuração: {ConfigStore.FilePath}\nLog: {Infrastructure.Log.Folder}";
+        SourceInitialized += (_, _) =>
+            System.Windows.Interop.HwndSource.FromHwnd(new System.Windows.Interop.WindowInteropHelper(this).Handle)?.AddHook(OnWindowMessage);
+
+        AboutText.Text =$"Build: {Infrastructure.BuildInfo.Describe()}\nConfiguração: {ConfigStore.FilePath}\nLog: {Infrastructure.Log.Folder}";
         Show(View.Devices);
+    }
+
+    /// <summary>
+    /// Com esta janela em foco, o Windows pode mandar o botão de mídia como WM_APPCOMMAND em vez de
+    /// passá-lo pelo hook. Sem tratar, a janela repassa o comando e o Windows executa (ex.: abre o
+    /// navegador no Home). Se o botão está remapeado, o comando é descartado; a ação vem do motor.
+    /// </summary>
+    private IntPtr OnWindowMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (msg != Infrastructure.Native.WM_APPCOMMAND || S.Paused)
+            return IntPtr.Zero;
+
+        var command = (int)(((long)lParam >> 16) & 0x0FFF);
+        if (KeyNames.VkForAppCommand(command) is not { } vk)
+            return IntPtr.Zero;
+
+        var remapped = S.Config.Devices.Where(d => d.Active).SelectMany(d => d.Buttons)
+            .Any(b => b.Part == ButtonPart.Consumer && b.HookVk == vk && b.Action.Type != ActionType.Keep);
+        Infrastructure.Log.Write("APPCOMMAND", $"janela do RemapUSB recebeu {KeyNames.VkName(vk)} (comando {command})"
+            + (remapped ? ", descartado porque o botão está remapeado" : ", repassado ao Windows"));
+        if (!remapped)
+            return IntPtr.Zero;
+
+        handled = true;
+        return new IntPtr(1);
     }
 
     // ================= Navegação =================
