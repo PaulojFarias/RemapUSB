@@ -64,7 +64,7 @@ Os demais botões continuam normais.
 dotnet run --project src/RemapUSB.Proto2a
 ```
 
-O log vai para `proto2a-<máquina>-<data-hora>.txt` na raiz do repositório. A primeira linha depois do TubeTV diz se o Scancode Map está configurado. Linhas `[DONGLE]` dizem se o controle estava plugado ao iniciar e quando ele foi desconectado ou reconectado.
+O log vai para `proto2a-<máquina>-<data-hora>.txt` na raiz do repositório. A primeira linha depois do TubeTV diz se o Scancode Map está configurado. Linhas `[DONGLE]` dizem se o controle estava conectado ou desconectado ao iniciar, e quando ele foi desconectado ou conectado depois.
 
 **Botões de mídia (Voltar, Home):** o hook de teclado segura a tecla e cruza com o Raw Input para saber se veio do controle. O Raw chega antes do hook, então a decisão é imediata. Se em 60ms nenhum Raw do controle aparecer, a tecla veio de outro teclado e é reenviada ao Windows.
 

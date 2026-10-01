@@ -71,8 +71,8 @@ internal sealed class DeviceInput : NativeWindow, IDisposable
         }
 
         Log.Write(_present.Count > 0
-            ? $"{Stamp()} [DONGLE]    conectado ao iniciar ({_present.Count} partes)"
-            : $"{Stamp()} [DONGLE]    NÃO conectado ao iniciar");
+            ? $"{Stamp()} [DONGLE]    conectado ao iniciar"
+            : $"{Stamp()} [DONGLE]    desconectado ao iniciar");
     }
 
     private void HandleDeviceChange(int change, IntPtr device)
@@ -81,7 +81,7 @@ internal sealed class DeviceInput : NativeWindow, IDisposable
         // false para elas e nada é registrado. Só a primeira parte que volta e a última que
         // sai geram linha, para o controle inteiro aparecer uma vez só.
         if (change == GIDC_ARRIVAL && IsTarget(device) && _present.Add(device) && _present.Count == 1)
-            Log.Write($"{Stamp()} [DONGLE]    reconectado");
+            Log.Write($"{Stamp()} [DONGLE]    conectado");
         else if (change == GIDC_REMOVAL && _present.Remove(device) && _present.Count == 0)
             Log.Write($"{Stamp()} [DONGLE]    desconectado");
     }
