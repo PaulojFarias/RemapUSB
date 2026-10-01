@@ -20,6 +20,9 @@ internal sealed class DeviceInput : NativeWindow, IDisposable
     private readonly string _deviceId;
     private readonly Dictionary<IntPtr, bool> _isTarget = new();
 
+    /// <summary>Partes do dispositivo alvo (teclado, mídia) presentes agora.</summary>
+    private readonly HashSet<IntPtr> _present = new();
+
     public event Action<DeviceEvent>? Received;
 
     /// <summary>Teclas de outros teclados. Não vão para o log, para não registrar o que é digitado.</summary>
@@ -29,11 +32,13 @@ internal sealed class DeviceInput : NativeWindow, IDisposable
     {
         _deviceId = deviceId;
         CreateHandle(new CreateParams { Parent = HwndMessage });
+        LogInitialPresence();
 
+        // DEVNOTIFY avisa quando uma parte é conectada ou removida.
         RAWINPUTDEVICE[] devices =
         [
-            new() { UsagePage = 0x01, Usage = 0x06, Flags = RIDEV_INPUTSINK, Target = Handle },
-            new() { UsagePage = 0x0C, Usage = 0x01, Flags = RIDEV_INPUTSINK, Target = Handle },
+            new() { UsagePage = 0x01, Usage = 0x06, Flags = RIDEV_INPUTSINK | RIDEV_DEVNOTIFY, Target = Handle },
+            new() { UsagePage = 0x0C, Usage = 0x01, Flags = RIDEV_INPUTSINK | RIDEV_DEVNOTIFY, Target = Handle },
         ];
         var ok = RegisterRawInputDevices(devices, (uint)devices.Length, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());
         Log.Write(ok
@@ -45,9 +50,43 @@ internal sealed class DeviceInput : NativeWindow, IDisposable
     {
         if (m.Msg == WM_INPUT)
             HandleInput(m.LParam);
+        else if (m.Msg == WM_INPUT_DEVICE_CHANGE)
+            HandleDeviceChange((int)m.WParam, m.LParam);
 
         base.WndProc(ref m);
     }
+
+    private void LogInitialPresence()
+    {
+        uint count = 0;
+        var itemSize = (uint)Marshal.SizeOf<RAWINPUTDEVICELIST>();
+        GetRawInputDeviceList(null, ref count, itemSize);
+        var list = new RAWINPUTDEVICELIST[count];
+        GetRawInputDeviceList(list, ref count, itemSize);
+
+        foreach (var item in list)
+        {
+            if (item.Type is RIM_TYPEKEYBOARD or RIM_TYPEHID && IsTarget(item.Device))
+                _present.Add(item.Device);
+        }
+
+        Log.Write(_present.Count > 0
+            ? $"{Stamp()} [DONGLE]    conectado ao iniciar ({_present.Count} partes)"
+            : $"{Stamp()} [DONGLE]    NÃO conectado ao iniciar");
+    }
+
+    private void HandleDeviceChange(int change, IntPtr device)
+    {
+        // Ao registrar, o Windows anuncia as partes que já estavam plugadas: o Add devolve
+        // false para elas e nada é registrado. Só a primeira parte que volta e a última que
+        // sai geram linha, para o controle inteiro aparecer uma vez só.
+        if (change == GIDC_ARRIVAL && IsTarget(device) && _present.Add(device) && _present.Count == 1)
+            Log.Write($"{Stamp()} [DONGLE]    reconectado");
+        else if (change == GIDC_REMOVAL && _present.Remove(device) && _present.Count == 0)
+            Log.Write($"{Stamp()} [DONGLE]    desconectado");
+    }
+
+    private static string Stamp() => $"{Clock.Format(Clock.Ms)} {DateTime.Now:HH:mm:ss}";
 
     private void HandleInput(IntPtr rawInput)
     {
