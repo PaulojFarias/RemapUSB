@@ -45,13 +45,14 @@ dotnet run --project src/RemapUSB.App
 
 ## Gerar o instalador
 
-1. **Publicar** (Visual Studio): botão direito em `RemapUSB.App` → Publicar → perfil **win-x64** → Publicar.
-   Ou na linha de comando: `dotnet publish src/RemapUSB.App -p:PublishProfile=win-x64`.
-   Sai um `RemapUSB.exe` único em `installer\publish`, que roda sem o .NET instalado.
-2. **Compilar o instalador**: instale o [Inno Setup 6](https://jrsoftware.org/isinfo.php), abra `installer\RemapUSB.iss` → Build → Compile.
-   Sai `installer\Output\RemapUSB-Setup-<versão>.exe`.
+Com o [Inno Setup 6](https://jrsoftware.org/isinfo.php) instalado, dê dois cliques em **`installer\gerar-instalador.cmd`**. Ele publica o app, compila o instalador e abre a pasta `installer\Output` com o `RemapUSB-Setup-<versão>.exe`.
 
-A versão vem do `<Version>` do `RemapUSB.App.csproj`: aumente antes de gerar uma versão nova. Instalar a versão nova por cima atualiza; a configuração de cada pessoa fica no `%AppData%`.
+Os dois passos que ele faz, se precisar rodar à mão:
+
+1. **Publicar:** `dotnet publish src/RemapUSB.App -p:PublishProfile=win-x64`. Sai um `RemapUSB.exe` único em `installer\publish`, que roda sem o .NET instalado.
+2. **Compilar:** abrir `installer\RemapUSB.iss` no Inno Setup → Build → Compile.
+
+**Versão:** `<base>.<quantidade de commits>`, por exemplo `1.0.27`. O último número sobe sozinho a cada commit. A base (`RemapUsbBaseVersion` no `RemapUSB.App.csproj`) é manual: mude para marcar uma versão maior. Instalar a versão nova por cima atualiza; a configuração de cada pessoa fica no `%AppData%`.
 
 **O instalador** instala só para o usuário (sem administrador), cria o atalho no menu Iniciar e oferece iniciar com o Windows.
 

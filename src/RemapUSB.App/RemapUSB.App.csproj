@@ -10,8 +10,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>RemapUSB</RootNamespace>
     <AssemblyName>RemapUSB</AssemblyName>
-    <!-- Versão do app: o instalador lê daqui (do RemapUSB.exe publicado). -->
-    <Version>1.0.0</Version>
+    <!--
+      Versão do app: <base>.<quantidade de commits>, ex.: 1.0.27. A base é manual (mude para marcar
+      uma versão maior); o último número sobe sozinho a cada commit. O instalador lê do .exe publicado.
+      Sem git, fica <base>.0.
+    -->
+    <RemapUsbBaseVersion>1.0</RemapUsbBaseVersion>
+    <Version>$(RemapUsbBaseVersion).0</Version>
     <Product>RemapUSB</Product>
     <Description>Remapeia botões de controles USB</Description>
     <!-- WPF0001: o tema Fluent (ThemeMode) ainda é marcado como experimental. -->
@@ -22,6 +27,15 @@
     Identifica o build no log: commit do git, se havia alteração não commitada e a hora da compilação.
     Sem git (ou fora do repositório), o app mostra "desconhecido".
   -->
+  <Target Name="RemapUsbVersion" BeforeTargets="GetAssemblyVersion">
+    <Exec Command="git rev-list --count HEAD" ConsoleToMSBuild="true" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="RemapUsbCommitCount" />
+    </Exec>
+    <PropertyGroup Condition="'$(RemapUsbCommitCount)' != '' And $([System.Text.RegularExpressions.Regex]::IsMatch('$(RemapUsbCommitCount)', '^\d+$'))">
+      <Version>$(RemapUsbBaseVersion).$(RemapUsbCommitCount)</Version>
+    </PropertyGroup>
+  </Target>
+
   <Target Name="RemapUsbBuildInfo" BeforeTargets="GetAssemblyAttributes">
     <Exec Command="git rev-parse --short HEAD" ConsoleToMSBuild="true" IgnoreExitCode="true" StandardOutputImportance="low" StandardErrorImportance="low">
       <Output TaskParameter="ConsoleOutput" PropertyName="RemapUsbCommit" />
