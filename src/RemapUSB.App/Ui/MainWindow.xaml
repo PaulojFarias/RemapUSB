@@ -3,7 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="RemapUSB" Width="1000" Height="680" MinWidth="800" MinHeight="520"
         WindowStartupLocation="CenterScreen"
-        PreviewKeyDown="OnPreviewKeyDown">
+        PreviewKeyDown="OnPreviewKeyDown"
+        PreviewMouseDown="OnPreviewMouseDown">
 
   <Window.Resources>
     <FontFamily x:Key="Icons">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
@@ -38,7 +39,12 @@
     <Style x:Key="Label" TargetType="TextBlock">
       <Setter Property="Margin" Value="0,16,0,6" />
     </Style>
+    <!--
+      Estilos com Template próprio substituem o estilo do tema inteiro, inclusive a cor do texto:
+      sem este Foreground o texto cai no preto padrão do Windows, ilegível no tema escuro.
+    -->
     <Style x:Key="Nav" TargetType="Button">
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
       <Setter Property="Cursor" Value="Hand" />
       <Setter Property="Template">
         <Setter.Value>
@@ -59,11 +65,32 @@
       </Setter>
     </Style>
     <Style x:Key="Link" TargetType="Button">
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
       <Setter Property="Cursor" Value="Hand" />
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
             <ContentPresenter />
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="BackButton" TargetType="Button">
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="ToolTip" Value="Voltar" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd" Width="40" Height="40" CornerRadius="6" Background="Transparent">
+              <TextBlock Text="&#xE72B;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="18"
+                         HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
       </Setter>
@@ -188,7 +215,8 @@
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
 
-          <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+          <StackPanel Orientation="Horizontal" Margin="-8,0,0,14">
+            <Button Style="{StaticResource BackButton}" Click="OnNavDevices" Margin="0,0,8,0" VerticalAlignment="Center" />
             <Button Style="{StaticResource Link}" Click="OnNavDevices">
               <TextBlock Text="Dispositivos" Style="{StaticResource PageTitle}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
             </Button>

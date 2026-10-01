@@ -108,6 +108,19 @@ public partial class MainWindow : Window
 
     private void OnNavDevices(object sender, RoutedEventArgs e) => Show(View.Devices);
 
+    /// <summary>Botão "voltar" lateral do mouse: fecha o editor ou volta para a lista de dispositivos.</summary>
+    private void OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton != MouseButton.XButton1 || ListenOverlay.Visibility == Visibility.Visible)
+            return;
+
+        e.Handled = true;
+        if (EditorOverlay.Visibility == Visibility.Visible)
+            CloseEditor();
+        else if (_view == View.Device)
+            Show(View.Devices);
+    }
+
     private void OnNavSettings(object sender, RoutedEventArgs e) => Show(View.Settings);
 
     private void OnResume(object sender, RoutedEventArgs e) => S.Paused = false;
