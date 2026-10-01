@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Text;
 
 namespace RemapUSB.Probe;
@@ -14,22 +13,23 @@ internal static class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
         var filter = args.Length > 0 ? args[0] : null;
+        HookCorrelator.Filtering = filter is not null;
 
-        Console.WriteLine("RemapUSB Probe: aperte os botões do controle. Ctrl+C para sair.");
-        Console.WriteLine("[RAW] = Raw Input (sabe o dispositivo) | [HOOK] = fluxo de teclado do Windows (não sabe o dispositivo)");
-        Console.WriteLine();
+        var logPath = Log.Open();
+        Log.Write($"RemapUSB Probe | máquina {Environment.MachineName} | {DateTime.Now:yyyy-MM-dd HH:mm:ss} | filtro {filter ?? "(nenhum)"}");
+        Log.Write("Aperte os botões do controle com qualquer janela em foco. Ctrl+C para sair.");
+        Log.Write("[RAW] = Raw Input (sabe o dispositivo) | [HOOK] = fluxo de teclado do Windows (não sabe o dispositivo)");
+        Log.Write(filter is null
+            ? "Sem filtro: o hook grava TODAS as teclas de todos os teclados."
+            : "Com filtro: o hook só grava teclas a até 150ms de um evento do dispositivo filtrado.");
+        Log.Write();
 
         using var window = new RawInputWindow(filter);
         using var hook = new KeyboardHook();
+        Log.Write();
+        Console.WriteLine($"Gravando em {logPath}");
         Console.WriteLine();
 
         Application.Run();
     }
-}
-
-internal static class Clock
-{
-    private static readonly Stopwatch Watch = Stopwatch.StartNew();
-
-    public static string Now => $"{Watch.Elapsed.TotalMilliseconds,10:F1}ms";
 }

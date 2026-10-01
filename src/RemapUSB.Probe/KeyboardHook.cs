@@ -16,7 +16,7 @@ internal sealed class KeyboardHook : IDisposable
     {
         _callback = OnKey;
         _hook = SetWindowsHookEx(WH_KEYBOARD_LL, _callback, GetModuleHandle(null), 0);
-        Console.WriteLine(_hook == IntPtr.Zero
+        Log.Write(_hook == IntPtr.Zero
             ? $"[HOOK] FALHA ao instalar, erro {Marshal.GetLastWin32Error()}"
             : "[HOOK] OK    teclado de baixo nível (só observa)");
     }
@@ -25,11 +25,12 @@ internal sealed class KeyboardHook : IDisposable
     {
         if (nCode >= 0)
         {
+            var at = Clock.Ms;
             var data = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
             var message = (int)wParam;
             var state = message is WM_KEYUP or WM_SYSKEYUP ? "solta  " : "aperta ";
             var injected = (data.Flags & 0x10) != 0 ? " (injetada)" : "";
-            Console.WriteLine($"{Clock.Now} [HOOK] {"qualquer teclado",-28} {state} VK=0x{data.VkCode:X2} {(Keys)data.VkCode,-18} scan=0x{data.ScanCode:X2}{injected}");
+            HookCorrelator.OnHookEvent(at, $"{Clock.Format(at)} [HOOK] {"qualquer teclado",-28} {state} VK=0x{data.VkCode:X2} {(Keys)data.VkCode,-18} scan=0x{data.ScanCode:X2}{injected}");
         }
 
         return CallNextHookEx(_hook, nCode, wParam, lParam);

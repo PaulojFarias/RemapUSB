@@ -44,11 +44,11 @@ internal sealed class RawInputWindow : NativeWindow, IDisposable
             };
 
             var ok = RegisterRawInputDevices([device], 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());
-            Console.WriteLine(ok
+            Log.Write(ok
                 ? $"[REGISTRO] OK    {name} (0x{page:X2}/0x{usage:X2})"
                 : $"[REGISTRO] FALHA {name} (0x{page:X2}/0x{usage:X2}) erro {Marshal.GetLastWin32Error()}");
         }
-        Console.WriteLine();
+        Log.Write();
     }
 
     private void ListDevices()
@@ -59,14 +59,14 @@ internal sealed class RawInputWindow : NativeWindow, IDisposable
         var list = new RAWINPUTDEVICELIST[count];
         GetRawInputDeviceList(list, ref count, itemSize);
 
-        Console.WriteLine("Dispositivos vistos pelo Raw Input" + (_filter is null ? ":" : $" (filtro {_filter}):"));
+        Log.Write("Dispositivos vistos pelo Raw Input" + (_filter is null ? ":" : $" (filtro {_filter}):"));
         foreach (var item in list)
         {
             var info = GetDevice(item.Device);
             if (Matches(info))
-                Console.WriteLine($"  {info.Describe()}");
+                Log.Write($"  {info.Describe()}");
         }
-        Console.WriteLine();
+        Log.Write();
     }
 
     protected override void WndProc(ref Message m)
@@ -86,11 +86,11 @@ internal sealed class RawInputWindow : NativeWindow, IDisposable
             _devices.Remove(device);
             var info = GetDevice(device);
             if (Matches(info))
-                Console.WriteLine($"{Clock.Now} [CONECTADO]    {info.Describe()}");
+                Log.Write($"{Clock.Format(Clock.Ms)} [CONECTADO]    {info.Describe()}");
         }
         else if (change == GIDC_REMOVAL && _devices.Remove(device, out var info) && Matches(info))
         {
-            Console.WriteLine($"{Clock.Now} [DESCONECTADO] {info.Describe()}");
+            Log.Write($"{Clock.Format(Clock.Ms)} [DESCONECTADO] {info.Describe()}");
         }
     }
 
@@ -119,7 +119,11 @@ internal sealed class RawInputWindow : NativeWindow, IDisposable
             };
 
             if (line is not null)
-                Console.WriteLine($"{Clock.Now} [RAW]  {info.Part,-28} {line}");
+            {
+                var at = Clock.Ms;
+                Log.Write($"{Clock.Format(at)} [RAW]  {info.Part,-28} {line}");
+                HookCorrelator.OnDeviceEvent(at);
+            }
         }
         finally
         {

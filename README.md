@@ -37,6 +37,10 @@ dotnet run --project src/RemapUSB.Probe -- VID_0627
 
 O argumento filtra pelo trecho do caminho do dispositivo (troque pelo VID do seu controle). Sem argumento, mostra todos.
 
+O probe escuta com **qualquer janela em foco**, então dá para apertar os botões mesmo que eles abram o navegador. Tudo é gravado também em `probe-<máquina>-<data-hora>.txt` na raiz do repositório.
+
 Linhas `[RAW]` dizem de qual parte do dispositivo veio o evento. Linhas `[HOOK]` mostram o que passou pelo fluxo de teclado do Windows (sem saber o dispositivo).
+
+Com filtro, o hook só grava teclas que chegam até 150ms antes ou depois de um evento do dispositivo filtrado, para não registrar o que você digita em outros teclados. **Sem filtro, o hook grava todas as teclas**: não rode sem filtro enquanto digita algo sensível.
 
 > ⚠️ Não aperte o Power durante o teste: o Windows ainda trata esse botão e desliga o PC.
