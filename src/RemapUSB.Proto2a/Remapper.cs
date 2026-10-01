@@ -5,15 +5,20 @@ using static RemapUSB.Probe.Native;
 namespace RemapUSB.Proto2a;
 
 /// <param name="Code">VK (teclado) ou uso HID (mídia) que o Raw Input entrega para o botão.</param>
-/// <param name="HookVk">VK que o mesmo botão gera no hook de teclado.</param>
-internal sealed record Mapping(string Name, Part Part, ushort Code, ushort HookVk, string ActionName, Action Fire);
+/// <param name="HookVk">
+/// VK que o mesmo botão gera no hook, para bloqueá-lo. Nulo quando a tecla já foi neutralizada
+/// no Windows (ex.: Menu virou F24 pelo Scancode Map): ela passa sem efeito e só o Raw dispara a ação.
+/// </param>
+internal sealed record Mapping(string Name, Part Part, ushort Code, ushort? HookVk, string ActionName, Action Fire);
 
 /// <summary>
 /// Bloqueia no hook as teclas mapeadas e decide, cruzando com o Raw Input, se vieram do
-/// dispositivo alvo. Funciona nas duas ordens:
-/// - Raw antes do hook (mídia): o hook já sabe a origem e decide na hora.
-/// - Hook antes do Raw (teclado): bloqueia, espera o Raw por até WindowMs e, se ele não
-///   vier, a tecla é de outro teclado e é reenviada ao Windows.
+/// dispositivo alvo:
+/// - Raw antes do hook (o normal na mídia): o hook já sabe a origem e decide na hora.
+/// - Hook antes do Raw: bloqueia, espera o Raw por até WindowMs e, se ele não vier, a tecla
+///   é de outro teclado e é reenviada ao Windows.
+/// Na parte de teclado o bloqueio não serve: com a tecla bloqueada no hook, o Windows nem gera
+/// o Raw (medido no Proto2a). Por isso tecla de teclado é neutralizada no Windows e não bloqueada.
 /// </summary>
 internal sealed class Remapper : IDisposable
 {
@@ -28,6 +33,7 @@ internal sealed class Remapper : IDisposable
     private readonly System.Windows.Forms.Timer _timer = new() { Interval = 10 };
     private readonly List<DeviceEvent> _recent = new();
     private readonly List<PendingKey> _pending = new();
+    private readonly HashSet<Mapping> _held = new();
 
     private sealed record PendingKey(double At, Mapping Mapping, bool IsUp, KBDLLHOOKSTRUCT Data);
 
@@ -55,7 +61,7 @@ internal sealed class Remapper : IDisposable
         if ((IntPtr)(long)data.ExtraInfo.ToUInt64() == Marker)
             return CallNextHookEx(_hook, nCode, wParam, lParam);
 
-        var mapping = _mappings.FirstOrDefault(m => m.HookVk == data.VkCode);
+        var mapping = _mappings.FirstOrDefault(m => m.HookVk is { } vk && vk == data.VkCode);
         if (mapping is null)
             return CallNextHookEx(_hook, nCode, wParam, lParam);
 
@@ -80,6 +86,17 @@ internal sealed class Remapper : IDisposable
 
     private void OnDeviceEvent(DeviceEvent e)
     {
+        var neutral = _mappings.FirstOrDefault(m => m.HookVk is null && m.Part == e.Part && m.Code == e.Code);
+        if (neutral is not null)
+        {
+            // Segurar o botão gera "aperta" repetido; a ação dispara só no primeiro.
+            if (e.IsUp)
+                _held.Remove(neutral);
+            else if (_held.Add(neutral))
+                Consume(e.At, neutral, isUp: false, "tecla neutralizada, sem bloqueio");
+            return;
+        }
+
         var pending = _pending.FirstOrDefault(p => Matches(p.Mapping, e, p.IsUp));
         if (pending is not null)
         {

@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+; RemapUSB: remove o Scancode Map (a tecla Menu volta ao normal em todos os teclados).
+; Vale apos reiniciar o Windows.
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout]
+"Scancode Map"=-

@@ -22,6 +22,9 @@ internal sealed class DeviceInput : NativeWindow, IDisposable
 
     public event Action<DeviceEvent>? Received;
 
+    /// <summary>Teclas de outros teclados. Não vão para o log, para não registrar o que é digitado.</summary>
+    public event Action<DeviceEvent>? OtherKeyboard;
+
     public DeviceInput(string deviceId)
     {
         _deviceId = deviceId;
@@ -57,11 +60,16 @@ internal sealed class DeviceInput : NativeWindow, IDisposable
                 return;
 
             var header = Marshal.PtrToStructure<RAWINPUTHEADER>(buffer);
-            if (!IsTarget(header.Device))
-                return;
-
             var at = Clock.Ms;
             var body = buffer + (int)HeaderSize;
+
+            if (!IsTarget(header.Device))
+            {
+                if (header.Type == RIM_TYPEKEYBOARD)
+                    OtherKeyboard?.Invoke(ReadKeyboard(at, body));
+                return;
+            }
+
             var deviceEvent = header.Type switch
             {
                 RIM_TYPEKEYBOARD => ReadKeyboard(at, body),

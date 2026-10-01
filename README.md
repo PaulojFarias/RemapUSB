@@ -58,10 +58,14 @@ Mapeamentos fixos no código (`Program.cs`), para o controle LE-7655 (VID_0627 /
 
 Os demais botões continuam normais.
 
+**Antes, uma vez:** dê dois cliques em `tools/menu-para-f24.reg`, confirme e **reinicie o Windows**. Para desfazer, use `tools/desfazer-menu-para-f24.reg` e reinicie. O `.reg` substitui qualquer Scancode Map que já exista na máquina.
+
 ```bash
 dotnet run --project src/RemapUSB.Proto2a
 ```
 
-O log vai para `proto2a-<máquina>-<data-hora>.txt` na raiz do repositório.
+O log vai para `proto2a-<máquina>-<data-hora>.txt` na raiz do repositório. A primeira linha depois do TubeTV diz se o Scancode Map está configurado.
 
-**Como o bloqueio funciona:** o hook de teclado segura as teclas mapeadas e cruza com o Raw Input para saber se vieram do controle. Nos botões de mídia o Raw chega antes do hook; no Menu de contexto, depois. Se em 60ms nenhum Raw do controle aparecer, a tecla veio de outro teclado e é reenviada ao Windows.
+**Botões de mídia (Voltar, Home):** o hook de teclado segura a tecla e cruza com o Raw Input para saber se veio do controle. O Raw chega antes do hook, então a decisão é imediata. Se em 60ms nenhum Raw do controle aparecer, a tecla veio de outro teclado e é reenviada ao Windows.
+
+**Botões de teclado (Menu):** bloquear no hook não funciona, porque com a tecla bloqueada o Windows nem gera o Raw e não dá para saber de onde ela veio. Por isso a tecla é **neutralizada**: o Scancode Map faz o Menu de todos os teclados virar F24, que nenhum programa usa. O F24 do controle passa sem efeito e dispara a ação; o F24 de outro teclado é devolvido como Menu. Com o app fechado, a tecla Menu de qualquer teclado fica sem função.
