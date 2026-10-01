@@ -64,8 +64,21 @@ internal static class ActionRunner
             SendKeyEvent(keys[i], 0, isUp: true);
     }
 
+    private static readonly HashSet<string> Busy = new(StringComparer.OrdinalIgnoreCase);
+
     private static void RunApp(ActionType type, AppRef app, string buttonName)
     {
+        // Apertar de novo enquanto o app ainda está fechando dispararia um segundo fechamento.
+        var id = app.Kind == AppKind.Package ? $"{app.PackageFamily}!{app.AppId}" : app.ExePath ?? app.Name;
+        lock (Busy)
+        {
+            if (!Busy.Add(id))
+            {
+                Log.Write("AÇÃO", $"{buttonName}: ação em {app.Name} ainda em andamento, ignorada");
+                return;
+            }
+        }
+
         List<Process> running = [];
         try
         {
@@ -105,6 +118,8 @@ internal static class ActionRunner
         {
             foreach (var process in running)
                 process.Dispose();
+            lock (Busy)
+                Busy.Remove(id);
         }
     }
 
@@ -168,14 +183,34 @@ internal static class ActionRunner
         Log.Write("AÇÃO", "app já estava aberto, trazido para a frente");
     }
 
+    /// <summary>
+    /// Janelas principais dos processos. Em app UWP a janela de cima é do ApplicationFrameHost
+    /// e só a filha (CoreWindow) é do processo do app, então a moldura entra pela filha.
+    /// </summary>
     private static List<IntPtr> TopWindows(HashSet<uint> processIds)
     {
         var result = new List<IntPtr>();
         EnumWindows((hwnd, _) =>
         {
+            if (!IsWindowVisible(hwnd) || GetWindow(hwnd, GW_OWNER) != IntPtr.Zero)
+                return true;
+
             GetWindowThreadProcessId(hwnd, out var pid);
-            if (processIds.Contains(pid) && IsWindowVisible(hwnd) && GetWindow(hwnd, GW_OWNER) == IntPtr.Zero)
+            if (processIds.Contains(pid))
+            {
                 result.Add(hwnd);
+            }
+            else if (ClassName(hwnd) == "ApplicationFrameWindow")
+            {
+                EnumChildWindows(hwnd, (child, _) =>
+                {
+                    GetWindowThreadProcessId(child, out var childPid);
+                    if (!processIds.Contains(childPid))
+                        return true;
+                    result.Add(hwnd);
+                    return false;
+                }, IntPtr.Zero);
+            }
             return true;
         }, IntPtr.Zero);
         return result;

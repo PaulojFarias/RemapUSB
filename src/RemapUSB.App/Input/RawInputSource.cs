@@ -25,7 +25,9 @@ internal sealed partial class RawInputSource : NativeWindow, IDisposable
     private static readonly System.Diagnostics.Stopwatch Clock = System.Diagnostics.Stopwatch.StartNew();
 
     private readonly Dictionary<IntPtr, DeviceInfo> _devices = new();
+    // Mexido só na thread de entrada; lido também pela interface (IsConnected), por isso o lock.
     private readonly Dictionary<string, HashSet<IntPtr>> _present = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Lock _presentGate = new();
 
     public event Action<KeyEvent>? Key;
     public event Action<ConsumerEvent>? Consumer;
@@ -52,7 +54,11 @@ internal sealed partial class RawInputSource : NativeWindow, IDisposable
             Log.Write("ERRO", $"Raw Input não registrou, erro {Marshal.GetLastWin32Error()}");
     }
 
-    public bool IsConnected(string deviceKey) => _present.TryGetValue(deviceKey, out var set) && set.Count > 0;
+    public bool IsConnected(string deviceKey)
+    {
+        lock (_presentGate)
+            return _present.TryGetValue(deviceKey, out var set) && set.Count > 0;
+    }
 
     /// <summary>Partes do dispositivo que o Windows expõe ao Raw Input, para a tela de escuta.</summary>
     public List<string> DescribeParts(string deviceKey)
@@ -115,10 +121,13 @@ internal sealed partial class RawInputSource : NativeWindow, IDisposable
             _devices.Remove(device);
             Track(device);
         }
-        else if (change == GIDC_REMOVAL && _devices.Remove(device, out var info) && info.Key.Length > 0
-                 && _present.TryGetValue(info.Key, out var set) && set.Remove(device) && set.Count == 0)
+        else if (change == GIDC_REMOVAL && _devices.Remove(device, out var info) && info.Key.Length > 0)
         {
-            Disconnected?.Invoke(info.Key);
+            bool gone;
+            lock (_presentGate)
+                gone = _present.TryGetValue(info.Key, out var set) && set.Remove(device) && set.Count == 0;
+            if (gone)
+                Disconnected?.Invoke(info.Key);
         }
     }
 
@@ -128,9 +137,14 @@ internal sealed partial class RawInputSource : NativeWindow, IDisposable
         if (info.Key.Length == 0 || info.Kind is not (DeviceKind.Keyboard or DeviceKind.Consumer))
             return;
 
-        if (!_present.TryGetValue(info.Key, out var set))
-            _present[info.Key] = set = [];
-        if (set.Add(device) && set.Count == 1)
+        bool first;
+        lock (_presentGate)
+        {
+            if (!_present.TryGetValue(info.Key, out var set))
+                _present[info.Key] = set = [];
+            first = set.Add(device) && set.Count == 1;
+        }
+        if (first)
             Connected?.Invoke(info.Key);
     }
 

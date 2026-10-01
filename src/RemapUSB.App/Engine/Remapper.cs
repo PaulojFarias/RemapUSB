@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using System.Windows.Threading;
 using RemapUSB.Actions;
 using RemapUSB.Infrastructure;
 using RemapUSB.Input;
@@ -30,7 +29,10 @@ internal sealed class Remapper : IDisposable
     private readonly RawInputSource _input;
     private readonly LowLevelKeyboardProc _callback;
     private readonly IntPtr _hook;
-    private readonly DispatcherTimer _timer = new(DispatcherPriority.Send) { Interval = TimeSpan.FromMilliseconds(10) };
+    private readonly System.Windows.Forms.Timer _timer = new() { Interval = 10 };
+
+    /// <summary>Acima disto o atraso do hook vai para o log: perto do limite em que o Windows o pula.</summary>
+    private const uint SlowHookMs = 40;
 
     private Dictionary<string, DeviceConfig> _devices = new(StringComparer.OrdinalIgnoreCase);
     private Dictionary<ushort, NeutralKey> _neutralByTargetVk = new();
@@ -44,9 +46,17 @@ internal sealed class Remapper : IDisposable
     private readonly List<(double At, ushort Usage)> _recordingConsumer = [];
     private readonly List<(double At, ushort Vk)> _recordingHookVks = [];
 
+    private volatile bool _paused;
+
+    /// <summary>Disparado na thread de entrada.</summary>
     public event Action<RecordedButton>? Recorded;
 
-    public bool Paused { get; set; }
+    /// <summary>Pode ser mudado de qualquer thread.</summary>
+    public bool Paused
+    {
+        get => _paused;
+        set => _paused = value;
+    }
 
     private sealed record PendingKey(double At, ushort Vk, ushort Scan, bool IsUp, bool Extended);
 
@@ -65,7 +75,7 @@ internal sealed class Remapper : IDisposable
         _timer.Start();
     }
 
-    /// <summary>Recarrega a configuração. Chamar sempre que ela mudar.</summary>
+    /// <summary>Recarrega a configuração. Chamar na thread de entrada, com uma cópia da configuração.</summary>
     public void Apply(AppConfig config)
     {
         _devices = config.Devices.Where(d => d.Active).GroupBy(d => d.Key, StringComparer.OrdinalIgnoreCase)
@@ -133,6 +143,11 @@ internal sealed class Remapper : IDisposable
         if (Paused || !_blockedVks.Contains(vk))
             return CallNextHookEx(_hook, nCode, wParam, lParam);
 
+        // Time é o instante em que o Windows gerou a tecla; a diferença é quanto o hook demorou a ser chamado.
+        var delay = unchecked((uint)Environment.TickCount - data.Time);
+        if (!isUp && delay > SlowHookMs && delay < 60_000)
+            Log.Write("HOOK", $"{KeyNames.VkName(vk)} chegou ao hook com {delay} ms de atraso");
+
         _recent.RemoveAll(r => at - r.At > WindowMs);
         var match = _recent.FindIndex(r => r.Button.HookVk == vk && r.IsUp == isUp);
         if (match >= 0)
@@ -143,6 +158,8 @@ internal sealed class Remapper : IDisposable
         }
         else
         {
+            if (!isUp)
+                Log.Write("HOOK", $"{KeyNames.VkName(vk)} segurada antes do Raw, aguardando até {WindowMs} ms");
             _pending.Add(new PendingKey(at, vk, (ushort)data.ScanCode, isUp, (data.Flags & 0x01) != 0));
         }
         return 1;
@@ -184,14 +201,15 @@ internal sealed class Remapper : IDisposable
             return;
         }
 
-        _recent.RemoveAll(r => e.At - r.At > WindowMs);
         _recent.Add((e.At, button, e.IsUp));
     }
 
     private void OnKey(KeyEvent e)
     {
-        // Tecla neutralizada: chega como F13..F24; volta a ser a original pelo scancode.
-        var neutral = _neutralByTargetVk.TryGetValue(e.Vk, out var n) && (e.Scan & 0xFF) == n.TargetScan ? n : null;
+        // Tecla neutralizada: chega como F13..F24 e volta a ser a original. Só o VK identifica:
+        // o scancode que o Raw Input entrega nesse caso não é confiável (medido no app: "F24"
+        // não era reconhecido comparando o scancode).
+        var neutral = _neutralByTargetVk.TryGetValue(e.Vk, out var n) ? n : null;
         var scan = neutral?.OriginalScan ?? e.Scan;
         var vk = neutral?.OriginalVk ?? e.Vk;
 
@@ -211,7 +229,8 @@ internal sealed class Remapper : IDisposable
         var button = device?.Buttons.FirstOrDefault(b => b.Part == ButtonPart.Keyboard && b.ScanCode == scan && b.Action.Type != ActionType.Keep);
         if (button is not null)
         {
-            Log.Write("RAW", $"{device!.Name}: {(e.IsUp ? "solta" : "aperta")} {button.Name} ({KeyNames.VkName(vk)}{(neutral is null ? "" : ", neutralizada")})");
+            Log.Write("RAW", $"{device!.Name}: {(e.IsUp ? "solta" : "aperta")} {button.Name} ({KeyNames.VkName(vk)}"
+                + $"{(neutral is null ? "" : $", neutralizada, chegou como {KeyNames.VkName(e.Vk)}")}, scan 0x{e.Scan:X4})");
             if (e.IsUp)
             {
                 _held.Remove(button.Id);
@@ -248,6 +267,15 @@ internal sealed class Remapper : IDisposable
     private void OnTick()
     {
         var now = RawInputSource.Now;
+
+        // Raw do dispositivo sem a tecla correspondente no hook: o Windows não chamou o hook a tempo
+        // (ou o pulou), e a tecla original pode ter chegado aos programas.
+        foreach (var recent in _recent.Where(r => now - r.At > WindowMs).ToList())
+        {
+            _recent.Remove(recent);
+            if (!recent.IsUp)
+                Log.Write("HOOK", $"{recent.Button.Name}: o Raw chegou, mas o hook não recebeu a tecla em {WindowMs} ms");
+        }
 
         foreach (var pending in _pending.Where(p => now - p.At > WindowMs).ToList())
         {

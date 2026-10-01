@@ -43,8 +43,8 @@ public partial class MainWindow : Window
         ActionCombo.ItemsSource = ActionText.All.Select(a => a.Label).ToList();
 
         _listenTimer.Tick += (_, _) => OnListenTick();
-        S.Input.Connected += OnListenConnected;
-        S.Remapper.Recorded += OnRecorded;
+        S.DeviceConnected += OnListenConnected;
+        S.Recorded += OnRecorded;
         S.StateChanged += () => Dispatcher.BeginInvoke(Refresh);
 
         AboutText.Text = $"Configuração: {ConfigStore.FilePath}\nLog: {Infrastructure.Log.Folder}";
@@ -91,7 +91,7 @@ public partial class MainWindow : Window
         var hasDevices = S.Config.Devices.Count > 0;
         DevicesEmpty.Visibility = hasDevices ? Visibility.Collapsed : Visibility.Visible;
         DevicesList.Visibility = hasDevices ? Visibility.Visible : Visibility.Collapsed;
-        DeviceItems.ItemsSource = S.Config.Devices.Select(d => new DeviceVm(d, S.Input.IsConnected)).ToList();
+        DeviceItems.ItemsSource = S.Config.Devices.Select(d => new DeviceVm(d, S.IsConnected)).ToList();
     }
 
     private void OnDeviceClick(object sender, MouseButtonEventArgs e)
@@ -135,7 +135,7 @@ public partial class MainWindow : Window
             return;
         }
 
-        var connected = S.Input.IsConnected(_device.Key);
+        var connected = S.IsConnected(_device.Key);
         DeviceTitle.Text = _device.Name;
         DeviceStatusDot.Fill = connected ? UiBrushes.Success : UiBrushes.Critical;
         DeviceStatusText.Text = $"{(connected ? "Conectado" : "Desconectado")} · VID_{_device.Vid} · PID_{_device.Pid}";
@@ -160,10 +160,10 @@ public partial class MainWindow : Window
 
     private void OnStartRecording(object sender, RoutedEventArgs e)
     {
-        if (_device is null || !S.Input.IsConnected(_device.Key))
+        if (_device is null || !S.IsConnected(_device.Key))
             return;
         _recording = true;
-        S.Remapper.StartRecording(_device.Key);
+        S.StartRecording(_device.Key);
         RefreshDevice();
     }
 
@@ -174,7 +174,7 @@ public partial class MainWindow : Window
         if (!_recording)
             return;
         _recording = false;
-        S.Remapper.StopRecording();
+        S.StopRecording();
         S.SaveAndApply();
         if (_view == View.Device)
             RefreshDevice();
@@ -609,8 +609,8 @@ public partial class MainWindow : Window
 
         _foundKey = key;
         _listenTimer.Stop();
-        ListenName.Text = S.Input.ProductName(key) ?? $"Dispositivo {key}";
-        ListenParts.ItemsSource = S.Input.DescribeParts(key).Select(p => p switch
+        ListenName.Text = S.ProductName(key) ?? $"Dispositivo {key}";
+        ListenParts.ItemsSource = S.DescribeParts(key).Select(p => p switch
         {
             "Teclado" => "Teclado · setas, OK, Menu… · remapeável",
             "Mídia" => "Mídia · Home, Voltar, volume… · remapeável",

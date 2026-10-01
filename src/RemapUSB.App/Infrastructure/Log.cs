@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text;
 
 namespace RemapUSB.Infrastructure;
@@ -6,11 +7,20 @@ namespace RemapUSB.Infrastructure;
 /// Log em arquivo, um por execução. Rodando de dentro do repositório (desenvolvimento), o arquivo
 /// vai para a raiz dele, para levar o resultado entre máquinas; instalado, vai para %LOCALAPPDATA%.
 /// Teclas de outros teclados nunca entram no log.
+///
+/// Escrever só enfileira: a gravação em disco roda em outra thread, para nunca atrasar o hook
+/// de teclado (o Windows pula um hook que demora a responder).
 /// </summary>
 internal static class Log
 {
+    private static readonly BlockingCollection<string> Queue = new();
     private static readonly Lock Gate = new();
     private static StreamWriter? _file;
+
+    static Log()
+    {
+        new Thread(Drain) { IsBackground = true, Name = "RemapUSB.Log", Priority = ThreadPriority.BelowNormal }.Start();
+    }
 
     public static string Folder { get; } = FindRepositoryRoot()
         ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RemapUSB", "logs");
@@ -35,13 +45,25 @@ internal static class Log
         }
     }
 
-    public static void Write(string tag, string message)
+    public static void Write(string tag, string message) =>
+        Queue.Add($"{DateTime.Now:HH:mm:ss.fff} [{tag}]{new string(' ', Math.Max(1, 11 - tag.Length))}{message}");
+
+    /// <summary>Espera a fila esvaziar (ao sair do app).</summary>
+    public static void Flush()
     {
-        var line = $"{DateTime.Now:HH:mm:ss.fff} [{tag}]{new string(' ', Math.Max(1, 11 - tag.Length))}{message}";
-        lock (Gate)
+        for (var i = 0; i < 50 && Queue.Count > 0; i++)
+            Thread.Sleep(20);
+    }
+
+    private static void Drain()
+    {
+        foreach (var line in Queue.GetConsumingEnumerable())
         {
-            System.Diagnostics.Debug.WriteLine(line);
-            _file?.WriteLine(line);
+            lock (Gate)
+            {
+                System.Diagnostics.Debug.WriteLine(line);
+                try { _file?.WriteLine(line); } catch (IOException) { }
+            }
         }
     }
 

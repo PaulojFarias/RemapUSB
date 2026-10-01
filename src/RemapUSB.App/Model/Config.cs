@@ -119,6 +119,10 @@ internal static class ConfigStore
         return new AppConfig();
     }
 
+    /// <summary>Cópia independente, para o motor ler sem disputar com a tela que edita.</summary>
+    public static AppConfig Clone(AppConfig config) =>
+        JsonSerializer.Deserialize<AppConfig>(JsonSerializer.Serialize(config, Options), Options)!;
+
     public static void Save(AppConfig config)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(FilePath)!);

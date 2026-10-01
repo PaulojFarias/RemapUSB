@@ -150,6 +150,50 @@ internal static class Native
     public static extern bool EnumWindows(EnumWindowsProc callback, IntPtr lParam);
 
     [DllImport("user32.dll")]
+    public static extern bool EnumChildWindows(IntPtr parent, EnumWindowsProc callback, IntPtr lParam);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern int GetClassName(IntPtr hwnd, StringBuilder name, int size);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PROCESS_POWER_THROTTLING_STATE
+    {
+        public uint Version;
+        public uint ControlMask;
+        public uint StateMask;
+    }
+
+    public const int ProcessPowerThrottling = 4;
+    public const uint PROCESS_POWER_THROTTLING_EXECUTION_SPEED = 0x1;
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool SetProcessInformation(IntPtr process, int infoClass, ref PROCESS_POWER_THROTTLING_STATE info, uint size);
+
+    [DllImport("kernel32.dll")]
+    public static extern IntPtr GetCurrentProcess();
+
+    /// <summary>
+    /// Pede ao Windows para não colocar o app em modo de economia (power throttling) quando ele
+    /// fica em segundo plano: o hook de teclado precisa responder rápido.
+    /// </summary>
+    public static bool DisablePowerThrottling()
+    {
+        var state = new PROCESS_POWER_THROTTLING_STATE
+        {
+            Version = 1,
+            ControlMask = PROCESS_POWER_THROTTLING_EXECUTION_SPEED,
+            StateMask = 0,
+        };
+        return SetProcessInformation(GetCurrentProcess(), ProcessPowerThrottling, ref state, (uint)Marshal.SizeOf<PROCESS_POWER_THROTTLING_STATE>());
+    }
+
+    public static string ClassName(IntPtr hwnd)
+    {
+        var buffer = new StringBuilder(256);
+        return GetClassName(hwnd, buffer, buffer.Capacity) > 0 ? buffer.ToString() : "";
+    }
+
+    [DllImport("user32.dll")]
     public static extern uint GetWindowThreadProcessId(IntPtr hwnd, out uint processId);
 
     [DllImport("user32.dll")]

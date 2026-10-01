@@ -43,6 +43,16 @@ dotnet run --project src/RemapUSB.App
 - A configuração fica em `%AppData%\RemapUSB\config.json`. Rodando de dentro do repositório, o log vai para `app-<máquina>-<data-hora>.txt` na raiz; instalado, para `%LocalAppData%\RemapUSB\logs`.
 - **Não rode o Proto2a junto com o app**: os dois remapeiam os mesmos botões.
 
+### Linhas `[HOOK]` no log
+
+O hook de teclado e o Raw Input rodam numa thread própria, de prioridade alta, separada da interface. Se mesmo assim o Windows atrasar o hook, o log mostra:
+
+| Linha | Significa |
+|---|---|
+| `chegou ao hook com N ms de atraso` | o Windows demorou mais de 40 ms para chamar o hook |
+| `segurada antes do Raw` | a tecla chegou ao hook antes do Raw do controle; o app espera até 60 ms |
+| `o Raw chegou, mas o hook não recebeu a tecla` | o Windows não passou a tecla pelo hook a tempo: a tecla original pode ter chegado ao programa (ex.: o navegador abrir no Home) |
+
 ### Como o app trata cada botão
 
 | Parte | Tecla original | Como |
