@@ -1,8 +1,9 @@
 Windows Registry Editor Version 5.00
 
-; RemapUSB: faz a tecla Menu (Apps, scancode E0 5D) virar F24 (scancode 76) em todos os teclados.
-; Com o RemapUSB rodando, F24 do controle dispara a acao e F24 de outros teclados volta a ser Menu.
-; ATENCAO: substitui qualquer Scancode Map que ja exista. Vale apos reiniciar o Windows.
+; RemapUSB (prototype 2a): turns the Menu key (Apps, scancode E0 5D) into F24 (scancode 76) on every keyboard.
+; With RemapUSB running, F24 from the remote triggers the action and F24 from other keyboards goes back to Menu.
+; WARNING: replaces any existing Scancode Map. Takes effect after restarting Windows.
+; The app does this itself in Settings, keeping other entries; this file is only for the prototype.
 
 [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout]
 "Scancode Map"=hex:00,00,00,00,00,00,00,00,02,00,00,00,76,00,5d,e0,00,00,00,00

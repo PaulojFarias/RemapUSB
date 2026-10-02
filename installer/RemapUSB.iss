@@ -1,16 +1,19 @@
-﻿; Instalador do RemapUSB (Inno Setup 6).
+﻿; RemapUSB installer (Inno Setup 6).
 ;
-; 1. Visual Studio: botão direito em RemapUSB.App > Publicar > perfil win-x64 > Publicar.
-;    O app sai em installer\publish.
-; 2. Inno Setup: abrir este arquivo > Build > Compile.
-;    O instalador sai em installer\Output\RemapUSB-Setup-<versão>.exe.
+; Easiest way: double-click installer\gerar-instalador.cmd (publishes and compiles).
+; By hand:
+; 1. dotnet publish src/RemapUSB.App -p:PublishProfile=win-x64
+;    The app goes to installer\publish.
+; 2. Inno Setup: open this file > Build > Compile.
+;    The installer goes to installer\Output\RemapUSB-Setup-<version>.exe.
 ;
-; A versão vem do RemapUSB.exe publicado (<Version> do RemapUSB.App.csproj).
+; The version is read from the published RemapUSB.exe (<Version> in RemapUSB.App.csproj).
+; The installer and its messages are in Brazilian Portuguese, like the app.
 
 #define AppName "RemapUSB"
 #define AppExe "RemapUSB.exe"
-; Onde procurar o app publicado: a pasta do perfil win-x64 e, se não existir, a pasta padrão
-; que o Visual Studio usa quando a publicação é feita por um perfil criado no assistente.
+; Where to look for the published app: the win-x64 profile folder and, if missing, the default
+; folder Visual Studio uses when publishing with a profile created by its wizard.
 #define PerfilDir AddBackslash(SourcePath) + "publish"
 #define PadraoVsDir AddBackslash(SourcePath) + "..\src\RemapUSB.App\bin\Release\net10.0-windows\win-x64\publish"
 
@@ -19,12 +22,13 @@
 #elif FileExists(AddBackslash(PadraoVsDir) + AppExe)
   #define PublishDir PadraoVsDir
 #else
-  ; Sem o .exe publicado a versão sai vazia e o Inno só reclama do AppVersion; melhor dizer o que falta.
+  ; Without the published .exe the version comes out empty and Inno only complains about
+  ; AppVersion; better to say what is missing.
   #error Não achei o RemapUSB.exe publicado. No Visual Studio: botão direito em RemapUSB.App > Publicar, escolha o perfil win-x64 e clique em Publicar.
 #endif
 
-; Publicação que depende do .NET instalado traz o RemapUSB.dll ao lado do .exe. Esse instalador
-; não rodaria na máquina de quem não tem o .NET 10, então é melhor parar aqui.
+; A publish that depends on an installed .NET has RemapUSB.dll next to the .exe. That installer
+; would not run on a machine without .NET 10, so stop here.
 #if FileExists(AddBackslash(PublishDir) + "RemapUSB.dll")
   #error A publicação encontrada depende do .NET instalado (tem RemapUSB.dll ao lado do .exe). Publique com o perfil win-x64, que é autossuficiente e em arquivo único.
 #endif
@@ -34,13 +38,13 @@
   #error O RemapUSB.exe publicado não tem versão. Publique de novo com o perfil win-x64.
 #endif
 
-; Códigos de saída do "RemapUSB.exe --desfazer-teclas" (ver NeutralCleanup.cs).
+; Exit codes of "RemapUSB.exe --desfazer-teclas" (see NeutralCleanup.cs).
 #define UndoNothing 0
 #define UndoFailed 1
 #define UndoRestart 10
 
 [Setup]
-; Identifica o app para o Windows: nunca mudar, senão a versão nova não substitui a antiga.
+; Identifies the app to Windows: never change it, or a new version will not replace the old one.
 AppId={{6F3B2A8C-41D7-4E59-9C0A-7B2E5D1F8A43}
 AppName={#AppName}
 AppVersion={#AppVersion}
@@ -48,8 +52,8 @@ AppPublisher=PaulojFarias
 DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
-; Instala só para o usuário, sem pedir administrador. O administrador só é pedido na
-; desinstalação, e só se o app tiver neutralizado alguma tecla.
+; Installs for the current user only, without administrator rights. Administrator rights are only
+; requested on uninstall, and only if the app neutralized some key.
 PrivilegesRequired=lowest
 OutputDir=Output
 OutputBaseFilename=RemapUSB-Setup-{#AppVersion}
@@ -60,7 +64,7 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 UninstallDisplayIcon={app}\{#AppExe}
 UninstallDisplayName={#AppName}
-; Fecha o app aberto antes de atualizar os arquivos.
+; Closes the running app before updating its files.
 CloseApplications=yes
 
 [Languages]
@@ -78,7 +82,7 @@ Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExe}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopicon
 
 [Registry]
-; Mesmo valor que a opção "Iniciar com o Windows" do app usa.
+; Same value the app's "Iniciar com o Windows" (start with Windows) option uses.
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "RemapUSB"; ValueData: """{app}\{#AppExe}"" --tray"; Tasks: startup
 
 [Run]
@@ -92,17 +96,17 @@ procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   ResultCode: Integer;
 begin
-  { usUninstall: antes de apagar os arquivos, enquanto o RemapUSB.exe ainda existe. }
+  { usUninstall: before the files are deleted, while RemapUSB.exe still exists. }
   if CurUninstallStep <> usUninstall then
     exit;
 
-  { Fecha o app, se estiver aberto. Sem ele rodando, nenhum arquivo fica preso. }
+  { Closes the app if it is running, so no file stays locked. }
   Exec(ExpandConstant('{sys}\taskkill.exe'), '/im {#AppExe} /f', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 
-  { Tira o "iniciar com o Windows", inclusive se foi ligado pela tela do app (não pelo instalador). }
+  { Removes "start with Windows", even if it was turned on in the app (not by the installer). }
   RegDeleteValue(HKCU, 'Software\Microsoft\Windows\CurrentVersion\Run', 'RemapUSB');
 
-  { Desfaz as teclas neutralizadas. Pede administrador só se houver alguma. }
+  { Undoes neutralized keys. Asks for administrator rights only if there is any. }
   if not Exec(ExpandConstant('{app}\{#AppExe}'), '--desfazer-teclas', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
     ResultCode := {#UndoFailed};
 
@@ -114,7 +118,7 @@ begin
            mbInformation, MB_OK);
 end;
 
-{ Pergunta se quer reiniciar no fim: a tecla só volta ao normal depois do reinício. }
+{ Offers to restart at the end: the key only goes back to normal after a restart. }
 function UninstallNeedRestart(): Boolean;
 begin
   Result := RestartNeeded;

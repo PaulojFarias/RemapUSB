@@ -1,9 +1,10 @@
 @echo off
 chcp 65001 >nul
 setlocal
-rem Gera o instalador do RemapUSB com dois cliques:
-rem   1. publica o app com o perfil win-x64 (installer\publish)
-rem   2. compila o installer\RemapUSB.iss com o Inno Setup 6 (installer\Output)
+rem Builds the RemapUSB installer with a double-click:
+rem   1. publishes the app with the win-x64 profile (installer\publish)
+rem   2. compiles installer\RemapUSB.iss with Inno Setup 6 (installer\Output)
+rem Messages shown on screen are in Brazilian Portuguese, like the app.
 
 cd /d "%~dp0.."
 
@@ -12,7 +13,7 @@ echo [1/2] Publicando o app (perfil win-x64)...
 dotnet publish src\RemapUSB.App -p:PublishProfile=win-x64
 if errorlevel 1 goto falhou
 
-rem Lugares em que o Inno Setup 6 costuma ser instalado (para todos ou só para o usuário).
+rem Usual Inno Setup 6 install locations (for all users or for the current user only).
 set "ISCC="
 for %%P in ("%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe" "%ProgramFiles%\Inno Setup 6\ISCC.exe" "%LocalAppData%\Programs\Inno Setup 6\ISCC.exe") do (
   if not defined ISCC if exist "%%~P" set "ISCC=%%~P"
