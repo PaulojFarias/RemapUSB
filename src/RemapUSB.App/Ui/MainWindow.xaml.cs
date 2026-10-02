@@ -28,6 +28,7 @@ public partial class MainWindow : Window
     private OriginalMode _draftOriginal;
     private bool _capturing;
     private bool _suppress;
+    private bool _neutralLimitHit;
     private List<AppItemVm> _apps = [];
 
     // Escuta
@@ -196,7 +197,10 @@ public partial class MainWindow : Window
         NeutralPendingText.Text = status.Warning;
 
         foreach (var vm in _buttons)
+        {
+            vm.CanDelete = !_recording;
             vm.Refresh();
+        }
     }
 
     private void OnStartRecording(object sender, RoutedEventArgs e)
@@ -268,9 +272,27 @@ public partial class MainWindow : Window
 
     private void OnButtonRowClick(object sender, MouseButtonEventArgs e)
     {
-        if (_recording || IsInside<TextBox>(e.OriginalSource) || sender is not FrameworkElement { Tag: ButtonVm vm })
+        if (_recording || IsInside<TextBox>(e.OriginalSource) || IsInside<Button>(e.OriginalSource)
+            || sender is not FrameworkElement { Tag: ButtonVm vm })
             return;
         OpenEditor(vm.Config);
+    }
+
+    /// <summary>Lixeira da linha: tira da lista um botão gravado por engano, sem regravar os outros.</summary>
+    private void OnDeleteButtonClick(object sender, RoutedEventArgs e)
+    {
+        if (_recording || _device is null || sender is not FrameworkElement { Tag: ButtonVm vm })
+            return;
+
+        var answer = MessageBox.Show(this, $"Remover o botão {vm.Name} da lista?", "Remover botão",
+            MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (answer != MessageBoxResult.Yes)
+            return;
+
+        _device.Buttons.Remove(vm.Config);
+        _buttons.Remove(vm);
+        S.SaveAndApply();
+        RefreshDevice();
     }
 
     private void OnButtonNameLostFocus(object sender, RoutedEventArgs e) => S.SaveAndApply();
@@ -282,6 +304,7 @@ public partial class MainWindow : Window
         _editing = button;
         _draft = button.Action.Clone();
         _draftOriginal = button.Original;
+        _neutralLimitHit = false;
         _capturing = false;
 
         EditorTitle.Text = button.Name;
@@ -383,10 +406,14 @@ public partial class MainWindow : Window
 
             OriginalIntro.Text = "Este botão é da parte de teclado do controle. O Windows não diz de qual teclado veio a tecla a tempo de bloqueá-la, então é preciso escolher:";
             PassText.Text = $"A nova ação acontece e a tecla {key} também chega ao programa em foco.";
-            NeutralText.Text = $"A tecla {key} vira uma tecla sem uso em todos os teclados; o app devolve {key} aos outros teclados. Pede administrador e reinício.";
+            var (inUse, _) = NeutralSlots();
+            NeutralText.Text = $"A tecla {key} vira uma tecla sem uso em todos os teclados; o app devolve {key} aos outros teclados. Pede administrador e reinício. "
+                + $"{inUse}/{ScancodeMap.Capacity} teclas neutralizadas.";
 
             var lowRisk = KeyNames.IsLowRisk(_editing.Code);
-            OriginalWarnText.Text = _draftOriginal == OriginalMode.Neutralize
+            OriginalWarnText.Text = _neutralLimitHit
+                ? $"Apenas {ScancodeMap.Capacity} teclas podem ser neutralizadas. Para neutralizar esta, mude outra tecla neutralizada para Deixar passar."
+                : _draftOriginal == OriginalMode.Neutralize
                 ? lowRisk
                     ? $"Custo baixo: a tecla {key} é pouco usada. Com o RemapUSB fechado, ela fica sem função em todos os teclados."
                     : $"Custo alto: {key} é uma tecla de uso diário. Com o RemapUSB fechado, ela para de funcionar em todos os teclados."
@@ -455,8 +482,29 @@ public partial class MainWindow : Window
     {
         if (_suppress)
             return;
+
+        _neutralLimitHit = false;
         _draftOriginal = NeutralRadio.IsChecked == true ? OriginalMode.Neutralize : OriginalMode.Pass;
+        if (_draftOriginal == OriginalMode.Neutralize && !NeutralSlots().Fits)
+        {
+            // Sem tecla sem uso livre: volta para "deixar passar" e explica por quê.
+            _draftOriginal = OriginalMode.Pass;
+            _neutralLimitHit = true;
+        }
         UpdateEditor();
+    }
+
+    /// <summary>
+    /// Teclas neutralizadas contando a deste botão como está no editor, e se a deste botão cabe.
+    /// A mesma tecla já neutralizada em outro botão não ocupa vaga nova.
+    /// </summary>
+    private (int InUse, bool Fits) NeutralSlots()
+    {
+        var others = ScancodeMap.NeutralizedScans(S.Config, except: _editing);
+        var takesNewSlot = _editing is not null && !others.Contains(_editing.ScanCode);
+        var fits = !takesNewSlot || others.Count < ScancodeMap.Capacity;
+        var mine = _draftOriginal == OriginalMode.Neutralize && _draft.Type != ActionType.Keep && takesNewSlot;
+        return (others.Count + (mine ? 1 : 0), fits);
     }
 
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -564,8 +612,8 @@ public partial class MainWindow : Window
         var pending = missing.Count > 0 || unused.Count > 0;
 
         var title = applied.Count == 0
-            ? "Nenhuma tecla neutralizada"
-            : $"Aplicado: {string.Join(", ", applied.Select(a => a.Describe()))}{(active ? "" : " · reinicie o Windows para valer")}";
+            ? "nenhuma aplicada no Windows"
+            : $"aplicadas no Windows: {string.Join(", ", applied.Select(a => a.Describe()))}{(active ? "" : " (reinicie o Windows para valer)")}";
 
         var parts = new List<string>();
         if (missing.Count > 0)
@@ -584,7 +632,7 @@ public partial class MainWindow : Window
         LogCheck.IsChecked = S.Config.LogToFile;
 
         var status = NeutralStatus();
-        NeutralTitle.Text = status.Title;
+        NeutralTitle.Text = $"{ScancodeMap.NeutralizedScans(S.Config).Count}/{ScancodeMap.Capacity} teclas marcadas para neutralizar · {status.Title}";
         NeutralWarn.Visibility = Vis(status.Pending);
         NeutralWarnText.Text = status.Warning;
         ApplyNeutralButton.IsEnabled = status.Pending;

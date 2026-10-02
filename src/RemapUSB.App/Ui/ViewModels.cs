@@ -94,6 +94,11 @@ internal sealed class ButtonVm(ButtonConfig config) : ObservableObject
         }
     }
 
+    /// <summary>A lixeira some durante a gravação.</summary>
+    public bool CanDelete { get; set; } = true;
+
+    public Visibility DeleteVisibility => CanDelete ? Visibility.Visible : Visibility.Collapsed;
+
     /// <summary>Destaque rápido quando o botão é apertado de novo na gravação.</summary>
     public bool Flash
     {

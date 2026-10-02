@@ -65,6 +65,7 @@ The uninstaller undoes neutralized keys and offers to restart. If the administra
 ### Limitations
 
 - **Only keyboard and media buttons:** gamepads and joysticks, mouse buttons and buttons a vendor only exposes to its own software are not recognized.
+- **Up to 12 neutralized keys at a time:** each neutralized key needs its own unused key (F13 to F24), so the app can tell them apart. The same key used by several buttons or devices counts once. The editor and Settings show how many are in use (x/12).
 - **Power button:** not supported. Windows handles it before any program does.
 - **"Air mouse" pointer:** ignored.
 - **Bluetooth devices:** not recognized. The app identifies devices by their USB VID/PID.

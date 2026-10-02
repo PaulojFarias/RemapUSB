@@ -34,7 +34,21 @@ internal static class ScancodeMap
         (0x69, 0x81), (0x68, 0x80), (0x67, 0x7F), (0x66, 0x7E), (0x65, 0x7D), (0x64, 0x7C),
     ];
 
+    /// <summary>Quantas teclas dá para neutralizar ao mesmo tempo: uma tecla sem uso (F13 a F24) para cada.</summary>
+    public static int Capacity => Pool.Length;
+
     public static ushort PoolVkFor(ushort scan) => Pool.FirstOrDefault(p => p.Scan == scan).Vk;
+
+    /// <summary>
+    /// Scancodes que a configuração pede para neutralizar. A mesma tecla em dois botões (ou em dois
+    /// dispositivos) conta uma vez só, porque usa a mesma tecla sem uso.
+    /// </summary>
+    public static HashSet<ushort> NeutralizedScans(AppConfig config, ButtonConfig? except = null) =>
+        config.Devices
+            .SelectMany(d => d.Buttons)
+            .Where(b => b != except && b.Part == ButtonPart.Keyboard && b.Original == OriginalMode.Neutralize && b.Action.Type != ActionType.Keep)
+            .Select(b => b.ScanCode)
+            .ToHashSet();
 
     private static bool IsOurs(ushort targetScan) => Pool.Any(p => p.Scan == targetScan);
 
@@ -78,12 +92,7 @@ internal static class ScancodeMap
     /// <summary>Teclas que a configuração atual pede para neutralizar, reaproveitando os alvos já gravados.</summary>
     public static List<NeutralKey> Desired(AppConfig config)
     {
-        var scans = config.Devices
-            .SelectMany(d => d.Buttons)
-            .Where(b => b.Part == ButtonPart.Keyboard && b.Original == OriginalMode.Neutralize && b.Action.Type != ActionType.Keep)
-            .Select(b => b.ScanCode)
-            .Distinct()
-            .ToList();
+        var scans = NeutralizedScans(config).ToList();
 
         var applied = ReadApplied();
         var result = applied.Where(a => scans.Contains(a.OriginalScan)).ToList();

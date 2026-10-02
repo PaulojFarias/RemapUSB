@@ -75,6 +75,25 @@
         </Setter.Value>
       </Setter>
     </Style>
+    <Style x:Key="RowIconButton" TargetType="Button">
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Bd" Width="32" Height="32" CornerRadius="4" Background="Transparent">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
     <Style x:Key="BackButton" TargetType="Button">
       <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
       <Setter Property="Cursor" Value="Hand" />
@@ -287,6 +306,7 @@
                   <ColumnDefinition Width="1.3*" />
                   <ColumnDefinition Width="100" />
                   <ColumnDefinition Width="1.6*" />
+                  <ColumnDefinition Width="40" />
                   <ColumnDefinition Width="24" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Botão" Style="{StaticResource Caption}" />
@@ -304,6 +324,7 @@
                             <ColumnDefinition Width="1.3*" />
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="1.6*" />
+                            <ColumnDefinition Width="40" />
                             <ColumnDefinition Width="24" />
                           </Grid.ColumnDefinitions>
                           <StackPanel Margin="0,0,12,0">
@@ -320,7 +341,11 @@
                             <TextBlock Text="{Binding ActionMain}" Foreground="{Binding ActionBrush}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{Binding ActionSub}" Style="{StaticResource Caption}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" />
                           </StackPanel>
-                          <TextBlock Grid.Column="3" Text="&#xE76C;" FontFamily="{StaticResource Icons}" VerticalAlignment="Center"
+                          <Button Grid.Column="3" Style="{StaticResource RowIconButton}" Tag="{Binding}" Click="OnDeleteButtonClick"
+                                  Visibility="{Binding DeleteVisibility}" ToolTip="Remover este botão da lista">
+                            <TextBlock Text="&#xE74D;" FontFamily="{StaticResource Icons}" FontSize="14" />
+                          </Button>
+                          <TextBlock Grid.Column="4" Text="&#xE76C;" FontFamily="{StaticResource Icons}" VerticalAlignment="Center"
                                      Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
                         </Grid>
                       </Border>
