@@ -1,10 +1,10 @@
 # RemapUSB
 
-A Windows tray app that remaps the buttons of **one specific USB remote** to new actions. It was built for media remotes, such as the remote of a PC connected to a TV.
+A Windows tray app that remaps the buttons of **specific USB devices** to new actions. It works with any USB device whose buttons act as keyboard keys or media keys: media remotes, extra keyboards and numpads, macro pads, presentation clickers, foot pedals that emulate a keyboard.
 
-The remapping only applies to the saved remote: the same key coming from any other keyboard keeps working as usual.
+The remapping only applies to the devices you save: the same key coming from any other keyboard keeps working as usual. You can save several devices, each with its own buttons.
 
-**Examples:** the remote's Home button opens an app instead of the browser, Back sends Esc, Menu becomes Play/Pause, another button closes an app.
+**Example, with a media remote:** Home opens an app instead of the browser, Back sends Esc, Menu becomes Play/Pause, another button closes an app.
 
 > The app's interface is in Brazilian Portuguese.
 
@@ -22,13 +22,11 @@ To update, run the new version's installer over the old one. Your settings are k
 
 ## Use
 
-1. **Add a device:** click Adicionar dispositivo (Add device) and plug in the remote within 30 seconds. If it is already plugged in, unplug it and plug it back. The first device connected in that window is the one saved.
-2. **Record buttons:** click Gravar botões (Record buttons) and press each button on the remote once. The list starts empty and each new button becomes a row. Click Concluir gravação (Finish recording).
+1. **Add a device:** click Adicionar dispositivo (Add device) and plug in the device within 30 seconds. If it is already plugged in, unplug it and plug it back. The first device connected in that window is the one saved.
+2. **Record buttons:** click Gravar botões (Record buttons) and press each button on the device once. The list starts empty and each new button becomes a row. Click Concluir gravação (Finish recording).
 3. **Choose the action:** click a row, choose the action and save. Button names can be edited right in the list.
 
 **Closing the window** does not quit the app: it keeps running in the tray, as the remote icon next to the clock. From the icon you can open the window, pause remapping, toggle "start with Windows" and quit.
-
-You can save more than one remote, each with its own buttons.
 
 ### Available actions
 
@@ -50,12 +48,12 @@ Apps can be Store/MSIX apps or regular `.exe` programs. Store apps are opened th
 
 ### Media buttons and keyboard buttons
 
-A USB remote shows up in Windows split into parts, and each part behaves differently:
+A USB device shows up in Windows split into parts, and each part behaves differently:
 
 | Part | Typical buttons | Original key |
 |---|---|---|
 | **Media** | Home, Back, volume, mute | **blocked**: only the new action happens |
-| **Keyboard** | arrows, OK, Menu, Backspace, Delete | Windows does not allow blocking only the remote's key, so you choose |
+| **Keyboard** | arrows, OK, Menu, Backspace, Delete | Windows does not allow blocking only the device's key, so you choose |
 
 For keyboard buttons, the editor offers two options:
 
@@ -66,9 +64,10 @@ The uninstaller undoes neutralized keys and offers to restart. If the administra
 
 ### Limitations
 
+- **Only keyboard and media buttons:** gamepads and joysticks, mouse buttons and buttons a vendor only exposes to its own software are not recognized.
 - **Power button:** not supported. Windows handles it before any program does.
 - **"Air mouse" pointer:** ignored.
-- **Bluetooth remotes:** not recognized. The app identifies devices by their USB VID/PID.
+- **Bluetooth devices:** not recognized. The app identifies devices by their USB VID/PID.
 - **Programs running as administrator:** Windows does not let a regular program send keys to them.
 
 ## Settings and log
@@ -118,7 +117,7 @@ The keyboard hook and Raw Input run on their own high-priority thread, separate 
 | Line | Meaning |
 |---|---|
 | `chegou ao hook com N ms de atraso` | Windows took more than 40 ms to call the hook |
-| `segurada antes do Raw` | the key reached the hook before the remote's Raw Input; the app waits up to 60 ms |
+| `segurada antes do Raw` | the key reached the hook before the device's Raw Input; the app waits up to 60 ms |
 | `o Raw chegou, mas o hook não recebeu a tecla` | Windows did not pass the key through the hook: the action still runs, and the line says which window was in focus |
 | `[APPCOMMAND] janela do RemapUSB recebeu ...` | with the app's window in focus, the button arrived as an app command; if the button is remapped, the command is discarded |
 
