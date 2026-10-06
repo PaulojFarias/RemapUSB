@@ -1,0 +1,970 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- ============ Navigation ============ -->
+  <data name="NavDevices" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="NavSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+
+  <!-- ============ Devices View ============ -->
+  <data name="DevicesTitle" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="NoDevicesSaved" xml:space="preserve">
+    <value>No device saved</value>
+  </data>
+  <data name="NoDevicesSavedDescription" xml:space="preserve">
+    <value>Click Add device and connect the USB controller within the next 30 seconds. The first device connected in that window is the one that gets saved.</value>
+  </data>
+  <data name="AddDevice" xml:space="preserve">
+    <value>Add device</value>
+  </data>
+  <data name="SavedDevices" xml:space="preserve">
+    <value>Saved controllers. Click one to view and remap its buttons.</value>
+  </data>
+  <data name="DeviceSubtitle" xml:space="preserve">
+    <value>VID_{0} · PID_{1} · {2} recorded buttons · {3} remapped</value>
+  </data>
+  <data name="StatusConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="StatusDisconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="ActiveCheckbox" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="ActiveTooltip" xml:space="preserve">
+    <value>Enable or disable remappings for this controller</value>
+  </data>
+  <data name="RemoveDevice" xml:space="preserve">
+    <value>Remove device</value>
+  </data>
+  <data name="RemoveDeviceConfirm" xml:space="preserve">
+    <value>Remove {0} and all recorded buttons?</value>
+  </data>
+  <data name="DeleteButtonConfirm" xml:space="preserve">
+    <value>Remove button {0} from the list?</value>
+  </data>
+
+  <!-- ============ Device View (Buttons) ============ -->
+  <data name="RecordMoreButtons" xml:space="preserve">
+    <value>Record more buttons</value>
+  </data>
+  <data name="RecordingTitle" xml:space="preserve">
+    <value>Recording: press the controller buttons</value>
+  </data>
+  <data name="RecordingDescription" xml:space="preserve">
+    <value>Each new button becomes a row. Pressing an existing button just highlights its row. Keys from other keyboards are ignored.</value>
+  </data>
+  <data name="FinishRecording" xml:space="preserve">
+    <value>Finish recording</value>
+  </data>
+  <data name="NeutralPendingTitle" xml:space="preserve">
+    <value>Some keys need Windows-level neutralization</value>
+  </data>
+  <data name="NeutralPendingGoSettings" xml:space="preserve">
+    <value>Go to Settings</value>
+  </data>
+  <data name="NoButtonsRecorded" xml:space="preserve">
+    <value>No buttons recorded yet</value>
+  </data>
+  <data name="NoButtonsRecordedDescription" xml:space="preserve">
+    <value>Click Record buttons and press each controller button once. The list starts empty and fills up as buttons arrive.</value>
+  </data>
+  <data name="RecordButtons" xml:space="preserve">
+    <value>Record buttons</value>
+  </data>
+  <data name="ConnectDeviceToRecord" xml:space="preserve">
+    <value>Connect the device to record</value>
+  </data>
+  <data name="ColumnButton" xml:space="preserve">
+    <value>Button</value>
+  </data>
+  <data name="ColumnPart" xml:space="preserve">
+    <value>Part</value>
+  </data>
+  <data name="ColumnAction" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="PartMedia" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="PartKeyboard" xml:space="preserve">
+    <value>Keyboard</value>
+  </data>
+  <data name="DeleteButtonTooltip" xml:space="preserve">
+    <value>Remove this button from the list</value>
+  </data>
+  <data name="ButtonsHint" xml:space="preserve">
+    <value>Click a row to choose the action. The button name can be edited directly in the list.</value>
+  </data>
+
+  <!-- ============ Settings View ============ -->
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="StartupWithWindows" xml:space="preserve">
+    <value>Start with Windows</value>
+  </data>
+  <data name="StartupWithWindowsDescription" xml:space="preserve">
+    <value>The app opens in the tray when you sign in to Windows.</value>
+  </data>
+  <data name="LogToFile" xml:space="preserve">
+    <value>Log to file</value>
+  </data>
+  <data name="LogToFileDescription" xml:space="preserve">
+    <value>Controller connect/disconnect, buttons received, and actions triggered. Keys from other keyboards are not logged.</value>
+  </data>
+  <data name="OpenLogFolder" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="NeutralizedKeysSection" xml:space="preserve">
+    <value>Neutralized keys in Windows</value>
+  </data>
+  <data name="ApplyNeutralButton" xml:space="preserve">
+    <value>Apply (administrator)</value>
+  </data>
+  <data name="UndoAllNeutralButton" xml:space="preserve">
+    <value>Undo all</value>
+  </data>
+  <data name="NeutralKeysDescription" xml:space="preserve">
+    <value>Keyboard-part buttons marked as Neutralize need this Windows setting. It applies to all keyboards and only takes effect after a restart.</value>
+  </data>
+  <data name="NeutralInUse" xml:space="preserve">
+    <value>{0} of 12 neutralized keys in use</value>
+  </data>
+  <data name="NeutralKeysList" xml:space="preserve">
+    <value>Neutralized keys: {0}</value>
+  </data>
+  <data name="NeutralWarningAdmin" xml:space="preserve">
+    <value>Requires administrator rights and a restart to apply.</value>
+  </data>
+  <data name="NeutralWarningActive" xml:space="preserve">
+    <value>These keys do nothing on ANY keyboard while RemapUSB is closed. Only worth it for rarely used keys like Menu.</value>
+  </data>
+  <data name="PassText" xml:space="preserve">
+    <value>The new action runs and the {0} key also reaches the focused program.</value>
+  </data>
+  <data name="NeutralText" xml:space="preserve">
+    <value>The {0} key becomes an unused key on all keyboards; the app gives {0} back to other keyboards. Requires administrator rights and a restart. {1}/{2} neutralized keys in use.</value>
+  </data>
+  <data name="NeutralLimitHit" xml:space="preserve">
+    <value>Only {0} keys can be neutralized. To neutralize this one, change another neutralized key to Let it through.</value>
+  </data>
+  <data name="NeutralWarnLowRisk" xml:space="preserve">
+    <value>Low risk: the {0} key is rarely used. With RemapUSB closed, it does nothing on all keyboards.</value>
+  </data>
+  <data name="NeutralWarnHighRisk" xml:space="preserve">
+    <value>High risk: {0} is a daily-use key. With RemapUSB closed, it stops working on all keyboards.</value>
+  </data>
+  <data name="NeutralWarnPass" xml:space="preserve">
+    <value>If another program is focused, it receives {0}.</value>
+  </data>
+  <data name="NeutralWarnDelete" xml:space="preserve">
+    <value>In Explorer, with a file selected, the file goes to the Recycle Bin.</value>
+  </data>
+  <data name="MediaOriginalNoKey" xml:space="preserve">
+    <value>This button doesn't generate a key in Windows: only the new action runs.</value>
+  </data>
+  <data name="MediaOriginalBlocked" xml:space="preserve">
+    <value>Automatically blocked. Media button: only the new action runs</value>
+  </data>
+  <data name="MediaOriginalBrowser" xml:space="preserve">
+    <value>(the browser won't open anymore)</value>
+  </data>
+  <data name="AboutSection" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>RemapUSB</value>
+  </data>
+
+  <!-- ============ Action Editor (Sidebar) ============ -->
+  <data name="EditorTitle" xml:space="preserve">
+    <value>Choose action</value>
+  </data>
+  <data name="ActionLabel" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Remove button</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+
+  <!-- Action Types -->
+  <data name="ActionKeep" xml:space="preserve">
+    <value>Keep original</value>
+  </data>
+  <data name="ActionNone" xml:space="preserve">
+    <value>Do nothing</value>
+  </data>
+  <data name="ActionKey" xml:space="preserve">
+    <value>Send key or shortcut</value>
+  </data>
+  <data name="ActionMedia" xml:space="preserve">
+    <value>Media key</value>
+  </data>
+  <data name="ActionOpenApp" xml:space="preserve">
+    <value>Open app</value>
+  </data>
+  <data name="ActionCloseApp" xml:space="preserve">
+    <value>Close app</value>
+  </data>
+  <data name="ActionToggleApp" xml:space="preserve">
+    <value>Open/close app (toggle)</value>
+  </data>
+  <data name="ActionRestartApp" xml:space="preserve">
+    <value>Restart app</value>
+  </data>
+  <data name="ActionSite" xml:space="preserve">
+    <value>Open website</value>
+  </data>
+  <data name="ActionFile" xml:space="preserve">
+    <value>Open file or folder</value>
+  </data>
+  <data name="ActionCommand" xml:space="preserve">
+    <value>Run command</value>
+  </data>
+
+  <!-- App Panel -->
+  <data name="AppLabel" xml:space="preserve">
+    <value>App</value>
+  </data>
+  <data name="AppSearchPlaceholder" xml:space="preserve">
+    <value>Search installed app</value>
+  </data>
+  <data name="AppLoading" xml:space="preserve">
+    <value>Loading installed apps…</value>
+  </data>
+  <data name="BrowseExe" xml:space="preserve">
+    <value>Browse .exe…</value>
+  </data>
+  <data name="AppSelected" xml:space="preserve">
+    <value>Selected: {0}</value>
+  </data>
+  <data name="AppHintPackage" xml:space="preserve">
+    <value>Store/MSIX apps are opened via their package, so they keep working after updates.</value>
+  </data>
+  <data name="AppHintExe" xml:space="preserve">
+    <value>Regular .exe programs.</value>
+  </data>
+  <data name="AppKindPackage" xml:space="preserve">
+    <value>Store / MSIX</value>
+  </data>
+  <data name="AppKindExe" xml:space="preserve">
+    <value>.exe</value>
+  </data>
+
+  <!-- Key Panel -->
+  <data name="KeyOrShortcut" xml:space="preserve">
+    <value>Key or shortcut</value>
+  </data>
+  <data name="CaptureKey" xml:space="preserve">
+    <value>Capture</value>
+  </data>
+  <data name="NoKeyCaptured" xml:space="preserve">
+    <value>(no key)</value>
+  </data>
+  <data name="CaptureHint" xml:space="preserve">
+    <value>Click Capture and press the key or shortcut on your PC keyboard (e.g., Ctrl + Shift + T).</value>
+  </data>
+
+  <!-- Media Panel -->
+  <data name="MediaKeyLabel" xml:space="preserve">
+    <value>Media key</value>
+  </data>
+
+  <!-- Site Panel -->
+  <data name="UrlLabel" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="UrlHint" xml:space="preserve">
+    <value>Opens in the default browser. E.g., https://www.youtube.com</value>
+  </data>
+
+  <!-- File Panel -->
+  <data name="FileOrFolderLabel" xml:space="preserve">
+    <value>File or folder</value>
+  </data>
+  <data name="BrowseFile" xml:space="preserve">
+    <value>Browse…</value>
+  </data>
+  <data name="FileHint" xml:space="preserve">
+    <value>Opens with the default Windows program for that file type.</value>
+  </data>
+
+  <!-- Command Panel -->
+  <data name="CommandLabel" xml:space="preserve">
+    <value>Command</value>
+  </data>
+  <data name="CommandHint" xml:space="preserve">
+    <value>Runs without opening a window, with your user permissions.</value>
+  </data>
+
+  <!-- Original Key Options (Keyboard Part) -->
+  <data name="OriginalKeySection" xml:space="preserve">
+    <value>Original key</value>
+  </data>
+  <data name="OriginalIntro" xml:space="preserve">
+    <value>This button comes from the Keyboard part. Windows does not allow blocking only this device's key, so choose how the original key behaves:</value>
+  </data>
+  <data name="PassRadio" xml:space="preserve">
+    <value>Let it through (default)</value>
+  </data>
+  <data name="PassDescription" xml:space="preserve">
+    <value>The new action runs and the original key also reaches the focused program.</value>
+  </data>
+  <data name="NeutralizeRadio" xml:space="preserve">
+    <value>Neutralize</value>
+  </data>
+  <data name="NeutralizeDescription" xml:space="preserve">
+    <value>The key becomes an unused key (F13–F24) on EVERY keyboard, and the app gives the original key back to other keyboards. Requires administrator rights and a restart, applied in Settings → Neutralized keys. While RemapUSB is closed, the key does nothing on any keyboard.</value>
+  </data>
+  <data name="OriginalWarning" xml:space="preserve">
+    <value>Uses one of the 12 available neutralized keys (F13–F24). The same key used by multiple buttons or devices counts once.</value>
+  </data>
+
+  <!-- Original Key Options (Media Part) -->
+  <data name="MediaOriginalInfo" xml:space="preserve">
+    <value>This button comes from the Media part. The original key is blocked: only the new action runs.</value>
+  </data>
+
+  <!-- Simple Actions Hints -->
+  <data name="HintKeep" xml:space="preserve">
+    <value>The button keeps doing what it already did.</value>
+  </data>
+  <data name="HintNone" xml:space="preserve">
+    <value>The button does nothing.</value>
+  </data>
+
+  <!-- ============ Add Device Overlay ============ -->
+  <data name="ListenTitle" xml:space="preserve">
+    <value>Add device</value>
+  </data>
+  <data name="ListenDescription" xml:space="preserve">
+    <value>Connect the USB controller now. The first device detected in the next 30 seconds will be saved.</value>
+  </data>
+  <data name="ListenSeconds" xml:space="preserve">
+    <value>{0} seconds</value>
+  </data>
+  <data name="ListenSecondsLabel" xml:space="preserve">
+    <value>seconds</value>
+  </data>
+  <data name="ListenCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ListenRetry" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="ListenSaveAndRecord" xml:space="preserve">
+    <value>Save and record buttons</value>
+  </data>
+  <data name="ListenNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ListenPartsLabel" xml:space="preserve">
+    <value>Parts found</value>
+  </data>
+  <data name="ListenPartsNote" xml:space="preserve">
+    <value>Keyboard and Media parts can be remapped. Power button and mouse pointer are not supported in this version.</value>
+  </data>
+
+  <!-- ============ Tray Menu ============ -->
+  <data name="TrayOpen" xml:space="preserve">
+    <value>Open RemapUSB</value>
+  </data>
+  <data name="TrayPause" xml:space="preserve">
+    <value>Pause remapping</value>
+  </data>
+  <data name="TrayResume" xml:space="preserve">
+    <value>Resume remapping</value>
+  </data>
+  <data name="TrayStartup" xml:space="preserve">
+    <value>Start with Windows</value>
+  </data>
+  <data name="TrayExit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="TrayStatusNoDevices" xml:space="preserve">
+    <value>No device saved</value>
+  </data>
+  <data name="TrayStatusOneDevice" xml:space="preserve">
+    <value>{0} · {1}</value>
+  </data>
+  <data name="TrayStatusMultipleDevices" xml:space="preserve">
+    <value>{0} devices · {1} connected</value>
+  </data>
+  <data name="TrayConnected" xml:space="preserve">
+    <value>connected</value>
+  </data>
+  <data name="TrayDisconnected" xml:space="preserve">
+    <value>disconnected</value>
+  </data>
+  <data name="TrayPausedSuffix" xml:space="preserve">
+    <value> · paused</value>
+  </data>
+  <data name="TrayNotifyDeviceConnected" xml:space="preserve">
+    <value>{0} connected</value>
+  </data>
+  <data name="TrayNotifyDeviceConnectedBody" xml:space="preserve">
+    <value>Remappings are working again.</value>
+  </data>
+  <data name="TrayNotifyDeviceDisconnected" xml:space="preserve">
+    <value>{0} disconnected</value>
+  </data>
+  <data name="TrayNotifyDeviceDisconnectedBody" xml:space="preserve">
+    <value>Remappings will resume automatically when reconnected.</value>
+  </data>
+  <data name="TrayNotifyRunning" xml:space="preserve">
+    <value>RemapUSB keeps running</value>
+  </data>
+  <data name="TrayNotifyRunningBody" xml:space="preserve">
+    <value>The app stays in the tray, near the clock. To quit completely, use Exit in the tray menu.</value>
+  </data>
+
+  <!-- ============ Paused Bar ============ -->
+  <data name="PausedTitle" xml:space="preserve">
+    <value>Remapping paused.</value>
+  </data>
+  <data name="PausedDescription" xml:space="preserve">
+    <value>Buttons work as if the app didn't exist.</value>
+  </data>
+  <data name="ResumeButton" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+
+  <!-- ============ Media Keys (KeyNames.cs) ============ -->
+  <data name="MediaPlayPause" xml:space="preserve">
+    <value>Play/Pause</value>
+  </data>
+  <data name="MediaNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="MediaPrev" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="MediaStop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="MediaVolumeUp" xml:space="preserve">
+    <value>Volume Up</value>
+  </data>
+  <data name="MediaVolumeDown" xml:space="preserve">
+    <value>Volume Down</value>
+  </data>
+  <data name="MediaMute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
+  <data name="MediaBassBoost" xml:space="preserve">
+    <value>Bass Boost</value>
+  </data>
+  <data name="MediaBassDown" xml:space="preserve">
+    <value>Bass Down</value>
+  </data>
+  <data name="MediaTrebleUp" xml:space="preserve">
+    <value>Treble Up</value>
+  </data>
+  <data name="MediaTrebleDown" xml:space="preserve">
+    <value>Treble Down</value>
+  </data>
+
+  <!-- ============ Key Names (KeyNames.cs) - Common Keys ============ -->
+  <data name="KeyNone" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="KeyBackspace" xml:space="preserve">
+    <value>Backspace</value>
+  </data>
+  <data name="KeyTab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="KeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="KeyShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="KeyCtrl" xml:space="preserve">
+    <value>Ctrl</value>
+  </data>
+  <data name="KeyAlt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="KeyPause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="KeyCapsLock" xml:space="preserve">
+    <value>CapsLock</value>
+  </data>
+  <data name="KeyEscape" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="KeySpace" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="KeyPageUp" xml:space="preserve">
+    <value>Page Up</value>
+  </data>
+  <data name="KeyPageDown" xml:space="preserve">
+    <value>Page Down</value>
+  </data>
+  <data name="KeyEnd" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="KeyHome" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="KeyLeft" xml:space="preserve">
+    <value>Left</value>
+  </data>
+  <data name="KeyUp" xml:space="preserve">
+    <value>Up</value>
+  </data>
+  <data name="KeyRight" xml:space="preserve">
+    <value>Right</value>
+  </data>
+  <data name="KeyDown" xml:space="preserve">
+    <value>Down</value>
+  </data>
+  <data name="KeyPrintScreen" xml:space="preserve">
+    <value>Print Screen</value>
+  </data>
+  <data name="KeyInsert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="KeyDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Key0" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="Key1" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="Key2" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="Key3" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="Key4" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="Key5" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="Key6" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="Key7" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="Key8" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="Key9" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="KeyA" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="KeyB" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="KeyC" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="KeyD" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="KeyE" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="KeyF" xml:space="preserve">
+    <value>F</value>
+  </data>
+  <data name="KeyG" xml:space="preserve">
+    <value>G</value>
+  </data>
+  <data name="KeyH" xml:space="preserve">
+    <value>H</value>
+  </data>
+  <data name="KeyI" xml:space="preserve">
+    <value>I</value>
+  </data>
+  <data name="KeyJ" xml:space="preserve">
+    <value>J</value>
+  </data>
+  <data name="KeyK" xml:space="preserve">
+    <value>K</value>
+  </data>
+  <data name="KeyL" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="KeyM" xml:space="preserve">
+    <value>M</value>
+  </data>
+  <data name="KeyN" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="KeyO" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="KeyP" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="KeyQ" xml:space="preserve">
+    <value>Q</value>
+  </data>
+  <data name="KeyR" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="KeyS" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="KeyT" xml:space="preserve">
+    <value>T</value>
+  </data>
+  <data name="KeyU" xml:space="preserve">
+    <value>U</value>
+  </data>
+  <data name="KeyV" xml:space="preserve">
+    <value>V</value>
+  </data>
+  <data name="KeyW" xml:space="preserve">
+    <value>W</value>
+  </data>
+  <data name="KeyX" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="KeyY" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="KeyZ" xml:space="preserve">
+    <value>Z</value>
+  </data>
+  <data name="KeyLWin" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="KeyRWin" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="KeyApps" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="KeySleep" xml:space="preserve">
+    <value>Sleep</value>
+  </data>
+  <data name="KeyF1" xml:space="preserve">
+    <value>F1</value>
+  </data>
+  <data name="KeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="KeyF3" xml:space="preserve">
+    <value>F3</value>
+  </data>
+  <data name="KeyF4" xml:space="preserve">
+    <value>F4</value>
+  </data>
+  <data name="KeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="KeyF6" xml:space="preserve">
+    <value>F6</value>
+  </data>
+  <data name="KeyF7" xml:space="preserve">
+    <value>F7</value>
+  </data>
+  <data name="KeyF8" xml:space="preserve">
+    <value>F8</value>
+  </data>
+  <data name="KeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="KeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="KeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="KeyF12" xml:space="preserve">
+    <value>F12</value>
+  </data>
+  <data name="KeyF13" xml:space="preserve">
+    <value>F13</value>
+  </data>
+  <data name="KeyF14" xml:space="preserve">
+    <value>F14</value>
+  </data>
+  <data name="KeyF15" xml:space="preserve">
+    <value>F15</value>
+  </data>
+  <data name="KeyF16" xml:space="preserve">
+    <value>F16</value>
+  </data>
+  <data name="KeyF17" xml:space="preserve">
+    <value>F17</value>
+  </data>
+  <data name="KeyF18" xml:space="preserve">
+    <value>F18</value>
+  </data>
+  <data name="KeyF19" xml:space="preserve">
+    <value>F19</value>
+  </data>
+  <data name="KeyF20" xml:space="preserve">
+    <value>F20</value>
+  </data>
+  <data name="KeyF21" xml:space="preserve">
+    <value>F21</value>
+  </data>
+  <data name="KeyF22" xml:space="preserve">
+    <value>F22</value>
+  </data>
+  <data name="KeyF23" xml:space="preserve">
+    <value>F23</value>
+  </data>
+  <data name="KeyF24" xml:space="preserve">
+    <value>F24</value>
+  </data>
+  <data name="KeyNumLock" xml:space="preserve">
+    <value>NumLock</value>
+  </data>
+  <data name="KeyScrollLock" xml:space="preserve">
+    <value>ScrollLock</value>
+  </data>
+  <data name="KeyLShift" xml:space="preserve">
+    <value>Left Shift</value>
+  </data>
+  <data name="KeyRShift" xml:space="preserve">
+    <value>Right Shift</value>
+  </data>
+  <data name="KeyLCtrl" xml:space="preserve">
+    <value>Left Ctrl</value>
+  </data>
+  <data name="KeyRCtrl" xml:space="preserve">
+    <value>Right Ctrl</value>
+  </data>
+  <data name="KeyLAlt" xml:space="preserve">
+    <value>Left Alt</value>
+  </data>
+  <data name="KeyRAlt" xml:space="preserve">
+    <value>Right Alt</value>
+  </data>
+  <data name="KeyBrowserBack" xml:space="preserve">
+    <value>Browser Back</value>
+  </data>
+  <data name="KeyBrowserForward" xml:space="preserve">
+    <value>Browser Forward</value>
+  </data>
+  <data name="KeyBrowserRefresh" xml:space="preserve">
+    <value>Browser Refresh</value>
+  </data>
+  <data name="KeyBrowserStop" xml:space="preserve">
+    <value>Browser Stop</value>
+  </data>
+  <data name="KeyBrowserSearch" xml:space="preserve">
+    <value>Browser Search</value>
+  </data>
+  <data name="KeyBrowserFavorites" xml:space="preserve">
+    <value>Browser Favorites</value>
+  </data>
+  <data name="KeyBrowserHome" xml:space="preserve">
+    <value>Browser Home</value>
+  </data>
+  <data name="KeyVolumeMute" xml:space="preserve">
+    <value>Volume Mute</value>
+  </data>
+  <data name="KeyVolumeDown" xml:space="preserve">
+    <value>Volume Down</value>
+  </data>
+  <data name="KeyVolumeUp" xml:space="preserve">
+    <value>Volume Up</value>
+  </data>
+  <data name="KeyMediaNextTrack" xml:space="preserve">
+    <value>Next Track</value>
+  </data>
+  <data name="KeyMediaPrevTrack" xml:space="preserve">
+    <value>Previous Track</value>
+  </data>
+  <data name="KeyMediaStop" xml:space="preserve">
+    <value>Media Stop</value>
+  </data>
+  <data name="KeyMediaPlayPause" xml:space="preserve">
+    <value>Play/Pause</value>
+  </data>
+  <data name="KeyLaunchMail" xml:space="preserve">
+    <value>Launch Mail</value>
+  </data>
+  <data name="KeyLaunchMedia" xml:space="preserve">
+    <value>Launch Media</value>
+  </data>
+  <data name="KeyLaunchApp1" xml:space="preserve">
+    <value>Launch App 1</value>
+  </data>
+  <data name="KeyLaunchApp2" xml:space="preserve">
+    <value>Launch App 2</value>
+  </data>
+  <data name="KeyOemSemicolon" xml:space="preserve">
+    <value>;</value>
+  </data>
+  <data name="KeyOemPlus" xml:space="preserve">
+    <value>=</value>
+  </data>
+  <data name="KeyOemComma" xml:space="preserve">
+    <value>,</value>
+  </data>
+  <data name="KeyOemMinus" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="KeyOemPeriod" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="KeyOemQuestion" xml:space="preserve">
+    <value>/</value>
+  </data>
+  <data name="KeyOemTilde" xml:space="preserve">
+    <value>`</value>
+  </data>
+  <data name="KeyOemOpenBrackets" xml:space="preserve">
+    <value>[</value>
+  </data>
+  <data name="KeyOemPipe" xml:space="preserve">
+    <value>\</value>
+  </data>
+  <data name="KeyOemCloseBrackets" xml:space="preserve">
+    <value>]</value>
+  </data>
+  <data name="KeyOemQuotes" xml:space="preserve">
+    <value>'</value>
+  </data>
+  <data name="KeyOemBackslash" xml:space="preserve">
+    <value>\</value>
+  </data>
+  <data name="KeyProcessKey" xml:space="preserve">
+    <value>Process Key</value>
+  </data>
+  <data name="KeyAttn" xml:space="preserve">
+    <value>Attn</value>
+  </data>
+  <data name="KeyCrSel" xml:space="preserve">
+    <value>CrSel</value>
+  </data>
+  <data name="KeyExSel" xml:space="preserve">
+    <value>ExSel</value>
+  </data>
+  <data name="KeyEraseEof" xml:space="preserve">
+    <value>Erase EOF</value>
+  </data>
+  <data name="KeyPlay" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="KeyZoom" xml:space="preserve">
+    <value>Zoom</value>
+  </data>
+  <data name="KeyNoName" xml:space="preserve">
+    <value>NoName</value>
+  </data>
+  <data name="KeyPa1" xml:space="preserve">
+    <value>PA1</value>
+  </data>
+  <data name="KeyOemClear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="KeyUnknown" xml:space="preserve">
+    <value>Unknown (VK 0x{0:X2})</value>
+  </data>
+
+  <!-- ============ NeutralCleanup / Uninstall ============ -->
+  <data name="UndoKeysTitle" xml:space="preserve">
+    <value>RemapUSB - Undo Neutralized Keys</value>
+  </data>
+  <data name="UndoKeysNothing" xml:space="preserve">
+    <value>No neutralized keys to undo.</value>
+  </data>
+  <data name="UndoKeysSuccess" xml:space="preserve">
+    <value>Neutralized keys have been restored. A restart is required for changes to take effect.</value>
+  </data>
+  <data name="UndoKeysFailed" xml:space="preserve">
+    <value>Failed to undo neutralized keys. Administrator rights are required.</value>
+  </data>
+  <data name="UninstallKeysStillSwapped" xml:space="preserve">
+    <value>The keys neutralized by RemapUSB are still swapped in Windows because administrator permission was not granted.</value>
+  </data>
+  <data name="UninstallHowToUndo" xml:space="preserve">
+    <value>To undo later: reinstall RemapUSB, use Settings → Undo all and restart the computer.</value>
+  </data>
+
+  <!-- ============ Language Selection ============ -->
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LanguageSystem" xml:space="preserve">
+    <value>System default</value>
+  </data>
+  <data name="LanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguagePortuguese" xml:space="preserve">
+    <value>Português (Brasil)</value>
+  </data>
+  <data name="LanguageRestartRequired" xml:space="preserve">
+    <value>Language change takes effect after restarting the app.</value>
+  </data>
+  <data name="LanguageRestartConfirm" xml:space="preserve">
+    <value>Do you want to restart RemapUSB now to apply the language change?</value>
+  </data>
+
+  <!-- ============ Engine Mode ============ -->
+  <data name="EngineModeLabel" xml:space="preserve">
+    <value>Engine mode</value>
+  </data>
+  <data name="EngineModeBasic" xml:space="preserve">
+    <value>Basic (Hook + RawInput)</value>
+  </data>
+  <data name="EngineModeInterception" xml:space="preserve">
+    <value>Advanced (Interception driver)</value>
+  </data>
+  <data name="EngineModeBasicDesc" xml:space="preserve">
+    <value>No driver required. Uses Windows hook + RawInput. Limited to 12 neutralized keys (F13-F24). Requires admin + restart for neutralized keys.</value>
+  </data>
+  <data name="EngineModeInterceptionDesc" xml:space="preserve">
+    <value>Uses signed Interception driver. Remaps entire keyboard/mouse with no limits. No neutralized keys needed. Requires driver install (once, UAC).</value>
+  </data>
+  <data name="EngineModeRestartRequired" xml:space="preserve">
+    <value>Engine change takes effect after restarting the app.</value>
+  </data>
+  <data name="EngineModeRestartConfirm" xml:space="preserve">
+    <value>Do you want to restart RemapUSB now to apply the engine change?</value>
+  </data>
+  <data name="InterceptionNotAvailable" xml:space="preserve">
+    <value>Interception driver not installed. Click 'Install driver' or use Basic mode.</value>
+  </data>
+  <data name="InstallInterceptionDriver" xml:space="preserve">
+    <value>Install Interception driver</value>
+  </data>
+</root>

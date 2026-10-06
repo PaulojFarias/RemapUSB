@@ -1,0 +1,6 @@
+11:03:50.330 [INÍCIO]     RemapUSB | versão 1.0.42, build e44d6fe (com alterações não commitadas), compilado em 2026-10-06 11:03:49 | máquina PC-PAULO | config C:\Users\PC-Paulo\AppData\Roaming\RemapUSB\config.json
+11:03:50.339 [ERRO]       Falha ao criar motor Interception: Unable to find an entry point named 'InterceptionCreateContext' in DLL 'interception.dll'.. Voltando para Basic.
+11:03:50.339 [ENGINE]     Interception falhou, caindo para Basic
+11:03:50.377 [DONGLE]     2.4G Composite Devic connected ao iniciar
+11:03:50.393 [CONFIG]     1 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
+11:05:47.335 [FIM]        RemapUSB encerrado

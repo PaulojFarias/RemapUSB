@@ -1,0 +1,23 @@
+10:06:42.250 [INÍCIO]     RemapUSB | versão 1.0.42, build e44d6fe (com alterações não commitadas), compilado em 2026-10-06 10:06:40 | máquina PC-PAULO | config C:\Users\PC-Paulo\AppData\Roaming\RemapUSB\config.json
+10:06:42.295 [DONGLE]     2.4G Composite Devic conectado ao iniciar
+10:06:42.300 [CONFIG]     1 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
+10:06:51.508 [CONFIG]     0 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
+10:06:58.507 [RAW]        WM_INPUT_DEVICE_CHANGE: GIDC_REMOVAL device=11796985 key=0627:697D kind=Keyboard path=\\?\HID#VID_0627&PID_697D&MI_00#8&19b62bf7&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}
+10:06:58.508 [RAW]        Dispositivo 0627:697D ainda tem 1 handle(s) ativo(s)
+10:06:58.509 [RAW]        WM_INPUT_DEVICE_CHANGE: GIDC_REMOVAL device=566821561 key=0627:697D kind=Consumer path=\\?\HID#VID_0627&PID_697D&MI_01&Col02#8&1f29fb2&0&0001#{4d1e55b2-f16f-11cf-88cb-001111000030}
+10:06:58.509 [RAW]        Dispositivo removido completamente: 0627:697D (Consumer)
+10:07:01.979 [RAW]        WM_INPUT_DEVICE_CHANGE: GIDC_ARRIVAL device=2951206
+10:07:01.979 [RAW]        ReadName: device=2951206 name=\\?\HID#VID_0627&PID_697D&MI_01&Col02#8&1f29fb2&0&0001#{4d1e55b2-f16f-11cf-88cb-001111000030}
+10:07:01.979 [RAW]        GetInfo (novo): device=2951206 key='0627:697D' kind=Consumer path=\\?\HID#VID_0627&PID_697D&MI_01&Col02#8&1f29fb2&0&0001#{4d1e55b2-f16f-11cf-88cb-001111000030} page=0x000C usage=0x0001 preparsed=sim
+10:07:01.982 [RAW]        WM_INPUT_DEVICE_CHANGE: GIDC_ARRIVAL device=12649816
+10:07:01.982 [RAW]        ReadName: device=12649816 name=\\?\HID#VID_0627&PID_697D&MI_00#8&19b62bf7&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd}
+10:07:01.982 [RAW]        GetInfo (novo): device=12649816 key='0627:697D' kind=Keyboard path=\\?\HID#VID_0627&PID_697D&MI_00#8&19b62bf7&0&0000#{884b96c3-56ef-11d1-bc8c-00a0c91405dd} page=0x0000 usage=0x0000 preparsed=não
+10:07:02.004 [RAW]        EnumerateDevices: 19 dispositivo(s) Raw Input encontrados
+10:07:02.005 [RAW]        ReadName: device=16777296 name=\\?\HID#VID_0627&PID_697D&MI_01&Col01#8&1f29fb2&0&0000#{378de44c-56ef-11d1-bc8c-00a0c91405dd}
+10:07:02.005 [RAW]        GetInfo (novo): device=16777296 key='0627:697D' kind=Mouse path=\\?\HID#VID_0627&PID_697D&MI_01&Col01#8&1f29fb2&0&0000#{378de44c-56ef-11d1-bc8c-00a0c91405dd} page=0x0000 usage=0x0000 preparsed=não
+10:07:05.597 [CONFIG]     1 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
+10:07:05.598 [DONGLE]     2.4G Composite Devic salvo (0627:697D)
+10:07:08.764 [GRAVAÇÃO]   iniciada para 0627:697D
+10:07:16.679 [GRAVAÇÃO]   concluída para 0627:697D
+10:07:16.693 [CONFIG]     1 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
+10:07:27.707 [FIM]        RemapUSB encerrado

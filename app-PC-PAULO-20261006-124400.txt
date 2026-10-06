@@ -1,0 +1,4 @@
+12:44:00.982 [INÍCIO]     RemapUSB | versão 1.0.32, build 86626ef (com alterações não commitadas), compilado em 2026-10-06 12:43:59 | máquina PC-PAULO | config C:\Users\PC-Paulo\AppData\Roaming\RemapUSB\config.json
+12:44:00.992 [ERRO]       Falha ao criar motor Interception: Unable to load DLL 'interception.dll' or one of its dependencies: Não foi possível encontrar o módulo especificado. (0x8007007E). Voltando para Basic.
+12:44:00.992 [ENGINE]     Interception falhou, caindo para Basic
+12:44:01.036 [CONFIG]     0 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
