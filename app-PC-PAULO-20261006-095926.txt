@@ -1,5 +1,0 @@
-09:59:26.739 [INÍCIO]     RemapUSB | versão 1.0.32, build 86626ef, compilado em 2026-10-06 09:59:25 | máquina PC-PAULO | config C:\Users\PC-Paulo\AppData\Roaming\RemapUSB\config.json
-09:59:26.788 [CONFIG]     0 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
-09:59:55.036 [CONFIG]     1 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
-09:59:55.037 [DONGLE]     2.4G Composite Devic salvo (0627:697D)
-10:00:03.769 [FIM]        RemapUSB encerrado

@@ -1,7 +1,0 @@
-Windows Registry Editor Version 5.00
-
-; RemapUSB (prototype 2a): removes the Scancode Map (the Menu key goes back to normal on every keyboard).
-; WARNING: removes the whole Scancode Map, including entries from other programs. Takes effect after restarting Windows.
-
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Keyboard Layout]
-"Scancode Map"=-

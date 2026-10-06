@@ -1,2 +1,0 @@
-13:17:09.899 [INÍCIO]     RemapUSB | versão 1.0.33, build a132d52 (com alterações não commitadas), compilado em 2026-10-06 13:17:08 | máquina PC-PAULO | config C:\Users\PC-Paulo\AppData\Roaming\RemapUSB\config.json
-13:17:09.949 [CONFIG]     0 dispositivo(s) ativo(s), 0 tecla(s) de mídia bloqueáveis, teclas neutralizadas: nenhuma
