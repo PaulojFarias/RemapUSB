@@ -78,6 +78,17 @@ The uninstaller undoes neutralized keys and offers to restart. If the administra
 - The first log line shows the version, the commit and the build time. The same information appears in **Configurações → Sobre** (Settings → About).
 - Keys from other keyboards are never logged.
 
+## Features
+
+- **Multi-language** – English and Brazilian Portuguese (UI and installer), auto-detected or manual selection
+- **Modern UI** – Fluent-inspired theme, dark/light mode support, responsive overlays
+- **Per-device remapping** – Each saved USB device gets its own button mappings
+- **Neutralized keys** – Scancode Map (F13–F24) for keyboard keys, with UAC elevation
+- **Per-user install** – No admin required for install, only for neutralized keys / uninstall
+- **Auto-start** – Optional start with Windows (per-user)
+- **Tray app** – Runs in background, single instance, pause/resume from tray
+- **Detailed logging** – Optional file logging with debug-level detail
+
 ## Development
 
 Requires the .NET 10 SDK. WPF app (Windows Fluent theme), no external packages.
@@ -128,9 +139,7 @@ The keyboard hook and Raw Input run on their own high-priority thread, separate 
 |---|---|
 | `src/RemapUSB.App` | the app |
 | `installer` | Inno Setup script and `gerar-instalador.cmd` |
-| `src/RemapUSB.Probe` | prototype 1: console that shows each button and which part of the remote it comes from |
-| `src/RemapUSB.Proto2a` | prototype 2a: remapping with fixed mappings, which proved the technique the app uses |
-| `tools` | `.reg` files prototype 2a used to neutralize Menu (the app does this in Settings) |
-| `docs/mockup.html` | clickable mockup of the screens, approved before the app was built |
 
-The prototypes are kept as a record of how the technique was validated. **Do not run Proto2a together with the app**, since both remap the same buttons.
+### Engine
+
+The app uses a **Basic engine** (Raw Input + Low-level Keyboard Hook) running on a dedicated high-priority STA thread. No external drivers, no kernel-mode components. Media keys are matched between the hook and Raw Input by timing; keyboard keys use the Scancode Map for neutralization.
